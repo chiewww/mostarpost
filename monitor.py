@@ -2,20 +2,23 @@ import re
 import urllib.request
 from pathlib import Path
 
-PDF_URL = "https://www.post.ba/media/files/POPIS%20DR%C5%BDAVA%20MEDJ%20PROMET%2013_12_2023.pdf"
+import pymupdf
 
-PDF_FILE = Path("mostar_post.pdf")
+
+PDF_URL = (
+    "https://www.post.ba/media/files/"
+    "POPIS%20DR%C5%BDAVA%20MEDJ%20PROMET%2013_12_2023.pdf"
+)
+
 OUTPUT_FILE = Path("output.txt")
 
 
-# ============================================================
-# POSTCROSSING NUMBERS
-# ============================================================
-
+# Postcrossing number + English name.
+# Parentheses are deliberately avoided in the English output.
 POSTCROSSING = {
-    "AFGANISTAN": (1, "Afghanistan"),
     "ALBANIJA": (3, "Albania"),
-    "ALŽIR": (4, "Algeria"),
+    "ALŽIR": (None, "Algeria"),
+    "AMERIČKI DJEVIČANSKI OTOCI": (243, "Virgin Islands of the USA"),
     "AMERIČKA SAMOA": (5, "American Samoa"),
     "ANDORA": (6, "Andorra"),
     "ANGOLA": (7, "Angola"),
@@ -36,13 +39,13 @@ POSTCROSSING = {
     "BELIZE": (23, "Belize"),
     "BENIN": (24, "Benin"),
     "BERMUDA": (25, "Bermuda"),
-    "BJELORUSIJA": (21, "Belarus"),
     "BJELOKOSNA OBALA": (54, "Côte d'Ivoire"),
+    "BJELORUSIJA": (21, "Belarus"),
     "BOCVANA": (30, "Botswana"),
     "BOLIVIJA": (27, "Bolivia"),
     "BOŽIĆNI OTOK": (46, "Christmas Island"),
     "BRAZIL": (31, "Brazil"),
-    "BRITANSKI DJEVIČANSKI OTOCI": (242, "Virgin Islands (UK)"),
+    "BRITANSKI DJEVIČANSKI OTOCI": (242, "Virgin Islands UK"),
     "BRUNEJ DARUSSALAM": (33, "Brunei"),
     "BUGARSKA": (34, "Bulgaria"),
     "BURKINA FASO": (35, "Burkina Faso"),
@@ -54,7 +57,7 @@ POSTCROSSING = {
     "ČEŠKA REPUBLIKA": (59, "Czechia"),
     "ČILE": (44, "Chile"),
     "DANSKA": (60, "Denmark"),
-    "DEMOKRATSKA NARODNA REPUBLIKA KOREJA": (116, "Korea(North)"),
+    "DEMOKRATSKA NARODNA REPUBLIKA KOREJA": (116, "Korea North"),
     "DEMOKRATSKA REPUBLIKA KONGO": (51, "Dem. Rep. Of Congo"),
     "DOMINIKA": (62, "Dominica"),
     "DOMINIKANSKA REPUBLIKA": (63, "Dominican Republic"),
@@ -65,9 +68,9 @@ POSTCROSSING = {
     "EKVATORSKA GVINEJA": (67, "Equatorial Guinea"),
     "ERITREJA": (68, "Eritrea"),
     "ESTONIJA": (69, "Estonia"),
-    "ESVATINI": (70, "Eswatini /Swaziland"),
+    "ESVATINI": (70, "Eswatini"),
     "ETIOPIJA": (71, "Ethiopia"),
-    "FAKLANDI": (72, "Falkland Islands /Malvinas"),
+    "FAKLANDI": (72, "Falkland Islands Malvinas"),
     "FIDŽI": (74, "Fiji"),
     "FILIPINI": (174, "Philippines"),
     "FINSKA": (75, "Finland"),
@@ -89,7 +92,6 @@ POSTCROSSING = {
     "GVATEMALA": (91, "Guatemala"),
     "GVINEJA": (93, "Guinea"),
     "GVINEJA – BISAU": (94, "Guinea-Bissau"),
-    "GVINEJA - BISAU": (94, "Guinea-Bissau"),
     "HAITI": (96, "Haiti"),
     "HONDURAS": (97, "Honduras"),
     "HONG KONG": (98, "Hong Kong"),
@@ -159,7 +161,7 @@ POSTCROSSING = {
     "MONTSERAT": (148, "Montserrat"),
     "MOZAMBIK": (150, "Mozambique"),
     "NAMIBIJA": (152, "Namibia"),
-    "NAURU": (153, "Nauru / Naoero"),
+    "NAURU": (153, "Nauru"),
     "NEPAL": (154, "Nepal"),
     "NIGER": (159, "Niger"),
     "NIGERIJA": (160, "Nigeria"),
@@ -186,7 +188,7 @@ POSTCROSSING = {
     "PORTORIKO": (178, "Puerto Rico"),
     "PORTUGAL": (177, "Portugal"),
     "REPUBLIKA KINA NA TAJVANU": (216, "Taiwan"),
-    "REPUBLIKA KOREJA": (117, "Korea(South)"),
+    "REPUBLIKA KOREJA": (117, "Korea South"),
     "REUNION": (180, "Réunion"),
     "RUANDA": (183, "Rwanda"),
     "RUMUNJSKA": (181, "Romania"),
@@ -234,11 +236,11 @@ POSTCROSSING = {
     "TUVALU": (229, "Tuvalu"),
     "UGANDA": (230, "Uganda"),
     "UJEDINJENI ARAPSKI EMIRATI": (232, "United Arab Emirates"),
-    "UJEDINJENI ARAPSLI EMIRATI": (232, "United Arab Emirates"),
     "UJEDINJENA KRALJEVINA VELIKE BRITANIJE I SJEVERNE IRSKE": (
         233,
         "United Kingdom",
     ),
+    "UJEDINJENI ARAPSLI EMIRATI": (232, "United Arab Emirates"),
     "UKRAJINA": (231, "Ukraine"),
     "URUGVAJ": (234, "Uruguay"),
     "UZBEKISTAN": (237, "Uzbekistan"),
@@ -251,16 +253,9 @@ POSTCROSSING = {
 }
 
 
-# ============================================================
-# COUNTRY NAMES AS THEY APPEAR IN THE PDF
-#
-# Parenthetical service information is intentionally NOT part
-# of these names.
-#
-# Duplicates are intentional.
-# ============================================================
-
-PDF_COUNTRIES = [
+# Exact order of entries in the PDF.
+# Duplicates are intentional and MUST be preserved.
+PDF_ENTRIES = [
     "ALBANIJA",
     "ALŽIR",
     "AMERIČKI DJEVIČANSKI OTOCI",
@@ -498,42 +493,6 @@ PDF_COUNTRIES = [
 ]
 
 
-# ============================================================
-# HELPERS
-# ============================================================
-
-def normalize_text(text):
-    text = text.replace("\r", " ")
-    text = text.replace("\n", " ")
-    text = text.replace("\t", " ")
-
-    # Normalize dash variants.
-    text = text.replace("—", "-")
-    text = text.replace("–", "-")
-    text = text.replace("-", "-")
-
-    # Collapse whitespace.
-    text = re.sub(r"\s+", " ", text)
-
-    return text.strip()
-
-
-def remove_parentheses(text):
-    """
-    Remove ALL parenthetical text.
-    """
-
-    while "(" in text and ")" in text:
-        new_text = re.sub(r"\([^()]*\)", " ", text)
-
-        if new_text == text:
-            break
-
-        text = new_text
-
-    return normalize_text(text)
-
-
 def download_pdf():
     print("Downloading Mostar Post PDF...")
 
@@ -541,10 +500,8 @@ def download_pdf():
         PDF_URL,
         headers={
             "User-Agent": (
-                "Mozilla/5.0 (X11; Linux x86_64) "
-                "AppleWebKit/537.36 "
-                "(KHTML, like Gecko) "
-                "Chrome/120.0 Safari/537.36"
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 Chrome/131 Safari/537.36"
             )
         },
     )
@@ -552,307 +509,268 @@ def download_pdf():
     with urllib.request.urlopen(request, timeout=60) as response:
         data = response.read()
 
-    if not data.startswith(b"%PDF"):
-        raise RuntimeError(
-            "The downloaded file is not a valid PDF."
-        )
-
-    PDF_FILE.write_bytes(data)
-
     print(f"Downloaded {len(data)} bytes.")
 
+    if not data.startswith(b"%PDF"):
+        raise RuntimeError("Downloaded file does not appear to be a PDF.")
 
-def extract_pdf_text():
+    return data
+
+
+def extract_pdf_text(pdf_data):
     print("Extracting PDF text...")
 
-    # Use the modern PyMuPDF import.
-    import pymupdf
+    document = pymupdf.open(stream=pdf_data, filetype="pdf")
 
-    document = pymupdf.open(PDF_FILE)
+    try:
+        pages = []
 
-    parts = []
+        for page in document:
+            pages.append(page.get_text("text"))
 
-    for page in document:
-        parts.append(page.get_text("text"))
-
-    document.close()
-
-    text = normalize_text(" ".join(parts))
-
-    if not text:
-        raise RuntimeError(
-            "No text could be extracted from the PDF."
-        )
+        text = "\n".join(pages)
+    finally:
+        document.close()
 
     return text
 
 
-# ============================================================
-# PARSER
-# ============================================================
+def normalize_text(text):
+    text = text.replace("\u00a0", " ")
+    text = text.replace("\u2013", " – ")
+    text = text.replace("\u2014", " – ")
+    text = text.replace("\u2212", " - ")
 
-def build_search_text(text):
+    # Remove PDF line-break artifacts.
+    text = re.sub(r"\s+", " ", text)
+
+    return text.strip()
+
+
+def remove_parenthetical_text(text):
     """
-    Prepare the PDF text for matching.
-
-    Parenthetical information is removed completely BEFORE
-    country matching.
-
-    This means differences such as:
-
-        VANUATU (pismovne pošiljke i paketi)
-
-    and
-
-        VANUATU
-
-    both become simply:
-
-        VANUATU
+    Remove every parenthetical section, including nested parentheses.
     """
+    previous = None
 
-    # Remove title.
+    while previous != text:
+        previous = text
+        text = re.sub(r"\([^()]*\)", " ", text)
+
+    text = re.sub(r"\s+", " ", text)
+    return text.strip()
+
+
+def clean_pdf_text(text):
+    text = normalize_text(text)
+
+    # The PDF sometimes joins adjacent words during text extraction.
+    replacements = {
+        "GVINEJA – BISAUHAITI": "GVINEJA – BISAU HAITI",
+        "OVČJI OTOCIPAKISTAN": "OVČJI OTOCI PAKISTAN",
+    }
+
+    for old, new in replacements.items():
+        text = text.replace(old, new)
+
+    # Repair known multi-word entries if PDF extraction inserted spaces.
+    text = text.replace(
+        "DEMOKRATSKA NARODNA REPUBLIKA KOREJA",
+        "DEMOKRATSKA NARODNA REPUBLIKA KOREJA",
+    )
+
+    return text
+
+
+def find_entries(text):
+    print("Parsing country entries...")
+
+    # Remove the service descriptions FIRST.
+    # This deliberately keeps duplicate entries such as:
+    #
+    # AUSTRALIJA (pismovne pošiljke)
+    # AUSTRALIJA (EMS...)
+    #
+    # as two AUSTRALIJA entries.
+    text = remove_parenthetical_text(text)
+
+    # Remove title/footer.
     text = re.sub(
-        r"POPIS\s+DRŽAVA\s+U\s+KOJE\s+JE\s+MOGUĆE\s+SLATI\s+POŠILJKE\s*:?",
+        r"POPIS DRŽAVA U KOJE JE MOGUĆE SLATI POŠILJKE\s*:?",
         " ",
         text,
         flags=re.IGNORECASE,
     )
 
-    # Remove footer/date.
-    text = re.split(
-        r"Posljednje\s+izmjene",
+    text = re.sub(
+        r"Posljednje izmjene.*$",
+        " ",
         text,
-        maxsplit=1,
         flags=re.IGNORECASE,
-    )[0]
-
-    # Remove all parenthetical text.
-    text = remove_parentheses(text)
-
-    return normalize_text(text)
-
-
-def normalize_country_for_matching(name):
-    name = normalize_text(name)
-
-    # Normalize dash spacing.
-    name = re.sub(r"\s*-\s*", "-", name)
-
-    return name.upper()
-
-
-def find_country_entries(text):
-    """
-    Locate every PDF country in its original order.
-
-    IMPORTANT:
-    We process PDF_COUNTRIES sequentially.
-
-    Therefore:
-
-        AUSTRALIJA
-        AUSTRALIJA
-
-    remains:
-
-        AUSTRALIJA
-        AUSTRALIJA
-
-    There is NO deduplication.
-    """
-
-    search_text = build_search_text(text)
-
-    # The PDF occasionally has extraction artefacts where spaces
-    # disappear around a dash.
-    search_text = search_text.replace(
-        "GVINEJA-BISAU",
-        "GVINEJA – BISAU",
     )
 
-    # Normalize whitespace/dashes for matching.
-    search_text = normalize_country_for_matching(search_text)
+    text = normalize_text(text)
+
+    # Known extraction glitches.
+    text = text.replace(
+        "GVINEJA – BISAUHAITI",
+        "GVINEJA – BISAU HAITI",
+    )
+
+    text = text.replace(
+        "OVČJI OTOCIPAKISTAN",
+        "OVČJI OTOCI PAKISTAN",
+    )
+
+    # Some PDF text extraction runs these together.
+    text = text.replace(
+        "UJEDINJENA KRALJEVINA VELIKE BRITANIJE I SJEVERNE IRSKE "
+        "UJEDINJENI ARAPSLI EMIRATI",
+        "UJEDINJENA KRALJEVINA VELIKE BRITANIJE I SJEVERNE IRSKE "
+        "UJEDINJENI ARAPSLI EMIRATI",
+    )
 
     entries = []
+
     position = 0
 
-    for expected in PDF_COUNTRIES:
-        expected_normalized = normalize_country_for_matching(
-            expected
-        )
+    for expected in PDF_ENTRIES:
+        index = text.find(expected, position)
 
-        # Special case for the dash in Guinea-Bissau.
-        alternatives = [expected_normalized]
+        if index == -1:
+            # Try the PDF's common hyphen/dash variants.
+            alternatives = [
+                expected.replace(" – ", " - "),
+                expected.replace(" - ", " – "),
+            ]
 
-        if expected_normalized == "GVINEJA – BISAU":
-            alternatives.extend(
-                [
-                    "GVINEJA - BISAU",
-                    "GVINEJA-BISAU",
-                ]
-            )
+            found = False
 
-        found = None
+            for alternative in alternatives:
+                index = text.find(alternative, position)
 
-        for alternative in alternatives:
-            pattern = re.escape(alternative)
+                if index != -1:
+                    found = True
+                    break
 
-            match = re.search(
-                pattern,
-                search_text[position:],
-            )
+            if not found:
+                context_start = max(0, position - 100)
+                context_end = min(len(text), position + 300)
 
-            if match:
-                found = match
-                break
-
-        if found is None:
-            raise RuntimeError(
-                "\nCould not find expected country entry:\n\n"
-                f"    {expected}\n\n"
-                "The PDF text extracted by PyMuPDF does not "
-                "contain this entry in the expected order.\n\n"
-                f"Parser position: {position}\n"
-            )
-
-        start = position + found.start()
-        end = position + found.end()
+                raise RuntimeError(
+                    "Could not find expected PDF entry:\n"
+                    f"    {expected}\n\n"
+                    "Text near current parsing position:\n"
+                    f"    {text[context_start:context_end]}"
+                )
 
         entries.append(expected)
+        position = index + len(expected)
 
-        position = end
+    print(f"Successfully found {len(entries)} country entries.")
 
     return entries
 
 
-# ============================================================
-# TRANSLATION
-# ============================================================
+def sanitize_output_text(text):
+    """
+    Absolute final protection:
+    output.txt must never contain parentheses.
 
-def translate_country(country):
-    country = normalize_text(country)
+    This applies to both the original destination name and
+    the English translation.
+    """
+    text = re.sub(r"\([^()]*\)", "", text)
 
-    # Normalize the dash.
-    country = country.replace("–", "-")
-    country = re.sub(r"\s*-\s*", "-", country)
+    # In case nested parentheses somehow survived.
+    previous = None
+    while previous != text:
+        previous = text
+        text = re.sub(r"\([^()]*\)", "", text)
 
-    special = {
-        "GVINEJA-BISAU": (
-            94,
-            "Guinea-Bissau",
-        ),
+    text = re.sub(r"\s+", " ", text)
+    return text.strip()
 
-        "BOŽIĆNI OTOK": (
-            46,
-            "Christmas Island",
-        ),
-
-        "FAKLANDI": (
-            72,
-            "Falkland Islands /Malvinas",
-        ),
-
-        "NIZOZEMSKI ANTILI": (
-            None,
-            "Netherlands Antilles",
-        ),
-
-        "OVČJI OTOCI": (
-            73,
-            "Faroe Islands",
-        ),
-
-        "REUNION": (
-            180,
-            "Réunion",
-        ),
-    }
-
-    key = country.upper()
-
-    if key in special:
-        number, english = special[key]
-
-    elif key in POSTCROSSING:
-        number, english = POSTCROSSING[key]
-
-    else:
-        # Unknown country.
-        # Keep the Croatian name rather than silently inventing
-        # a translation.
-        number = None
-        english = country
-
-    if number is not None:
-        return f"{number}. {country} — {english}"
-
-    return f"{country} — {english}"
-
-
-# ============================================================
-# OUTPUT
-# ============================================================
 
 def create_output(entries):
-    """
-    Create output.txt.
-
-    Every occurrence gets its own line.
-    Nothing is deduplicated.
-    """
-
     lines = []
 
     for entry in entries:
-        # Safety check: absolutely no parentheses in output.
-        entry = remove_parentheses(entry)
+        if entry not in POSTCROSSING:
+            raise RuntimeError(
+                f"No Postcrossing translation defined for: {entry}"
+            )
 
-        lines.append(
-            translate_country(entry)
-        )
+        number, english = POSTCROSSING[entry]
+
+        original = sanitize_output_text(entry)
+        english = sanitize_output_text(english)
+
+        if number is not None:
+            line = f"{number}. {original} — {english}"
+        else:
+            line = f"{original} — {english}"
+
+        # Final cleanup of accidental double spaces.
+        line = re.sub(r"\s+", " ", line).strip()
+
+        lines.append(line)
 
     output = "\n".join(lines) + "\n"
 
-    # Final safety check.
+    # Final validation.
     if "(" in output or ")" in output:
         raise RuntimeError(
-            "ERROR: Parentheses were found in output.txt."
+            "ERROR: Parentheses were found in output.txt after sanitization."
+        )
+
+    # One PDF entry must equal one output line.
+    if len(lines) != len(entries):
+        raise RuntimeError(
+            f"ERROR: Expected {len(entries)} output lines, "
+            f"but generated {len(lines)}."
         )
 
     return output
 
 
-# ============================================================
-# MAIN
-# ============================================================
-
 def main():
-    download_pdf()
+    pdf_data = download_pdf()
 
-    pdf_text = extract_pdf_text()
+    raw_text = extract_pdf_text(pdf_data)
+    raw_text = clean_pdf_text(raw_text)
 
-    print("Parsing country entries...")
-
-    entries = find_country_entries(pdf_text)
-
-    print(
-        f"Successfully found {len(entries)} country entries."
-    )
+    entries = find_entries(raw_text)
 
     output = create_output(entries)
 
-    OUTPUT_FILE.write_text(
-        output,
-        encoding="utf-8",
+    OUTPUT_FILE.write_text(output, encoding="utf-8")
+
+    print(f"Created {OUTPUT_FILE}")
+    print(f"Output contains {len(output.splitlines())} lines.")
+
+    # Show a few important duplicate checks.
+    australia_count = sum(
+        1 for entry in entries if entry == "AUSTRALIJA"
+    )
+    new_zealand_count = sum(
+        1 for entry in entries if entry == "NOVI ZELAND"
     )
 
-    print(
-        f"Created {OUTPUT_FILE} with "
-        f"{len(entries)} lines."
-    )
+    print(f"AUSTRALIJA entries: {australia_count}")
+    print(f"NOVI ZELAND entries: {new_zealand_count}")
 
-    print("Done.")
+    if australia_count != 2:
+        raise RuntimeError(
+            f"ERROR: Expected 2 AUSTRALIJA entries, got {australia_count}."
+        )
+
+    if new_zealand_count != 2:
+        raise RuntimeError(
+            f"ERROR: Expected 2 NOVI ZELAND entries, got {new_zealand_count}."
+        )
+
+    print("Validation successful.")
 
 
 if __name__ == "__main__":
