@@ -1,5 +1,5 @@
 3. ALBANIJA — Albania
-4. ALŽIR — Algeria
+ALŽIR — Algeria
 243. AMERIČKI DJEVIČANSKI OTOCI — Virgin Islands of the USA
 5. AMERIČKA SAMOA — American Samoa
 6. ANDORA — Andorra
@@ -11,8 +11,7 @@
 13. ARUBA — Aruba
 185. ASENŠN — Saint Helena, Ascension and Tristan da Cunha
 14. AUSTRALIJA — Australia
-AUSTRALIJA (EMS pošiljka i paketi — Australija (Ems Pošiljka I Paketi
-maksimalne mase 10 kg) — Maksimalne Mase 10 Kg)
+14. AUSTRALIJA — Australia
 15. AUSTRIJA — Austria
 16. AZERBEJDŽAN — Azerbaijan
 17. BAHAMI — Bahamas
@@ -30,7 +29,7 @@ maksimalne mase 10 kg) — Maksimalne Mase 10 Kg)
 46. BOŽIĆNI OTOK — Christmas Island
 46. BOŽIĆNI OTOK — Christmas Island
 31. BRAZIL — Brazil
-242. BRITANSKI DJEVIČANSKI OTOCI — Virgin Islands (UK)
+242. BRITANSKI DJEVIČANSKI OTOCI — Virgin Islands UK
 33. BRUNEJ DARUSSALAM — Brunei
 34. BUGARSKA — Bulgaria
 35. BURKINA FASO — Burkina Faso
@@ -42,7 +41,7 @@ maksimalne mase 10 kg) — Maksimalne Mase 10 Kg)
 59. ČEŠKA REPUBLIKA — Czechia
 44. ČILE — Chile
 60. DANSKA — Denmark
-116. DEMOKRATSKA NARODNA REPUBLIKA KOREJA — Korea(North)
+116. DEMOKRATSKA NARODNA REPUBLIKA KOREJA — Korea North
 51. DEMOKRATSKA REPUBLIKA KONGO — Dem. Rep. Of Congo
 62. DOMINIKA — Dominica
 63. DOMINIKANSKA REPUBLIKA — Dominican Republic
@@ -53,9 +52,9 @@ maksimalne mase 10 kg) — Maksimalne Mase 10 Kg)
 67. EKVATORSKA GVINEJA — Equatorial Guinea
 68. ERITREJA — Eritrea
 69. ESTONIJA — Estonia
-70. ESVATINI — Eswatini /Swaziland
+70. ESVATINI — Eswatini
 71. ETIOPIJA — Ethiopia
-72. FAKLANDI — Falkland Islands /Malvinas
+72. FAKLANDI — Falkland Islands Malvinas
 74. FIDŽI — Fiji
 174. FILIPINI — Philippines
 75. FINSKA — Finland
@@ -76,7 +75,7 @@ maksimalne mase 10 kg) — Maksimalne Mase 10 Kg)
 95. GVAJANA — Guyana
 91. GVATEMALA — Guatemala
 93. GVINEJA — Guinea
-GVINEJA - BISAU — Gvineja - Bisau
+94. GVINEJA – BISAU — Guinea-Bissau
 96. HAITI — Haiti
 97. HONDURAS — Honduras
 98. HONG KONG — Hong Kong
@@ -95,8 +94,7 @@ GVINEJA - BISAU — Gvineja - Bisau
 206. JUŽNA DŽORDŽIJA — South Georgia and S. Sandwich Islands
 206. JUŽNI SENDVIČ OTOCI — South Georgia and S. Sandwich Islands
 37. KABO VERDE — Cabo Verde
-KAJMANSKI OTOCI (pismovne pošiljke i — Kajmanski Otoci (Pismovne Pošiljke I
-paketi) — Paketi)
+41. KAJMANSKI OTOCI — Cayman Islands
 38. KAMBODŽA — Cambodia
 39. KAMERUN — Cameroon
 40. KANADA — Canada
@@ -115,9 +113,7 @@ paketi) — Paketi)
 56. KUBA — Cuba
 52. KUKOVI OTOCI — Cook Islands
 119. KUVAJT — Kuwait
-LAOSKA NARODNA DEMOKRATSKA — Laoska Narodna Demokratska
-REPUBLIKA (samo pismovne pošiljke I — Republika (Samo Pismovne Pošiljke I
-paketi) — Paketi)
+121. LAOSKA NARODNA DEMOKRATSKA REPUBLIKA — Laos
 122. LATVIJA — Latvia
 124. LESOTO — Lesotho
 123. LIBANON — Lebanon
@@ -125,8 +121,7 @@ paketi) — Paketi)
 127. LIHTENŠTAJN — Liechtenstein
 128. LITVA — Lithuania
 129. LUKSEMBURG — Luxembourg
-MADAGASKAR (samo pismovne — Madagaskar (Samo Pismovne
-pošiljke i paketi) — Pošiljke I Paketi)
+131. MADAGASKAR — Madagascar
 99. MAĐARSKA — Hungary
 141. MAJOT — Mayotte
 130. MAKAO — Macao
@@ -146,27 +141,23 @@ pošiljke i paketi) — Pošiljke I Paketi)
 151. MJANMAR — Myanmar
 144. MOLDAVIJA — Moldova
 145. MONAKO — Monaco
-MONGOLIJA (samo pismovne — Mongolija (Samo Pismovne
-pošiljke) — Pošiljke)
+146. MONGOLIJA — Mongolia
 148. MONTSERAT — Montserrat
 150. MOZAMBIK — Mozambique
 152. NAMIBIJA — Namibia
-153. NAURU — Nauru / Naoero
+153. NAURU — Nauru
 154. NEPAL — Nepal
 159. NIGER — Niger
 160. NIGERIJA — Nigeria
 158. NIKARAGVA — Nicaragua
 161. NIUE — Niue
 155. NIZOZEMSKA — Netherlands
-NIZOZEMSKI ANTILI (samo pismovne — Nizozemski Antili (Samo Pismovne
-pošiljke i paketi) — Pošiljke I Paketi)
+NIZOZEMSKI ANTILI — Netherlands Antilles
 83. NJEMAČKA — Germany
 165. NORVEŠKA — Norway
 156. NOVA KALEDONIJA — New Caledonia
-NOVI ZELAND (samo pismovne — Novi Zeland (Samo Pismovne
-pošiljke) — Pošiljke)
-NOVI ZELAND (EMS pošiljke I paketi — Novi Zeland (Ems Pošiljke I Paketi
-maksimalne mase 10kg) — Maksimalne Mase 10Kg)
+157. NOVI ZELAND — New Zealand
+157. NOVI ZELAND — New Zealand
 166. OMAN — Oman
 106. OTOK MAN — Isle of Man
 162. OTOK NORFOLK — Norfolk Island
@@ -182,7 +173,7 @@ maksimalne mase 10kg) — Maksimalne Mase 10Kg)
 178. PORTORIKO — Puerto Rico
 177. PORTUGAL — Portugal
 216. REPUBLIKA KINA NA TAJVANU — Taiwan
-117. REPUBLIKA KOREJA — Korea(South)
+117. REPUBLIKA KOREJA — Korea South
 180. REUNION — Réunion
 183. RUANDA — Rwanda
 181. RUMUNJSKA — Romania
@@ -237,9 +228,7 @@ maksimalne mase 10kg) — Maksimalne Mase 10Kg)
 237. UZBEKISTAN — Uzbekistan
 244. VALIS I FUTUNA — Wallis & Futuna
 238. VANUATU — Vanuatu
-VENEZUELA (pismovne pošiljke i — Venezuela (Pismovne Pošiljke I
-paketi) — Paketi)
+240. VENEZUELA — Venezuela
 241. VIJETNAM — Vietnam
 247. ZAMBIJA — Zambia
-ZIMBABVE (samo pismovne pošiljke i — Zimbabve (Samo Pismovne Pošiljke I
-paketi) — Paketi)
+248. ZIMBABVE — Zimbabwe
