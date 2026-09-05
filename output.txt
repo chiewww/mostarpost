@@ -1,5 +1,5 @@
 3. ALBANIJA — Albania
-ALŽIR — Algeria
+4. ALŽIR — Algeria
 243. AMERIČKI DJEVIČANSKI OTOCI — Virgin Islands of the USA
 5. AMERIČKA SAMOA — American Samoa
 6. ANDORA — Andorra
@@ -29,7 +29,7 @@ ALŽIR — Algeria
 46. BOŽIĆNI OTOK — Christmas Island
 46. BOŽIĆNI OTOK — Christmas Island
 31. BRAZIL — Brazil
-242. BRITANSKI DJEVIČANSKI OTOCI — Virgin Islands UK
+242. BRITANSKI DJEVIČANSKI OTOCI — Virgin Islands
 33. BRUNEJ DARUSSALAM — Brunei
 34. BUGARSKA — Bulgaria
 35. BURKINA FASO — Burkina Faso
@@ -41,7 +41,7 @@ ALŽIR — Algeria
 59. ČEŠKA REPUBLIKA — Czechia
 44. ČILE — Chile
 60. DANSKA — Denmark
-116. DEMOKRATSKA NARODNA REPUBLIKA KOREJA — Korea North
+116. DEMOKRATSKA NARODNA REPUBLIKA KOREJA — Korea
 51. DEMOKRATSKA REPUBLIKA KONGO — Dem. Rep. Of Congo
 62. DOMINIKA — Dominica
 63. DOMINIKANSKA REPUBLIKA — Dominican Republic
@@ -52,9 +52,9 @@ ALŽIR — Algeria
 67. EKVATORSKA GVINEJA — Equatorial Guinea
 68. ERITREJA — Eritrea
 69. ESTONIJA — Estonia
-70. ESVATINI — Eswatini
+70. ESVATINI — Eswatini /Swaziland
 71. ETIOPIJA — Ethiopia
-72. FAKLANDI — Falkland Islands Malvinas
+72. FAKLANDI — Falkland Islands /Malvinas
 74. FIDŽI — Fiji
 174. FILIPINI — Philippines
 75. FINSKA — Finland
@@ -63,7 +63,7 @@ ALŽIR — Algeria
 78. FRANCUSKA POLINEZIJA — French Polynesia
 80. GABON — Gabon
 81. GAMBIJA — Gambia
-84. GANA — Ghana
+83. GANA — Ghana
 92. GERNZI — Guernsey
 85. GIBRALTAR — Gibraltar
 86. GRČKA — Greece
@@ -145,14 +145,17 @@ ALŽIR — Algeria
 148. MONTSERAT — Montserrat
 150. MOZAMBIK — Mozambique
 152. NAMIBIJA — Namibia
-153. NAURU — Nauru
+153. NAURU — Nauru / Naoero
 154. NEPAL — Nepal
 159. NIGER — Niger
 160. NIGERIJA — Nigeria
 158. NIKARAGVA — Nicaragua
 161. NIUE — Niue
 155. NIZOZEMSKA — Netherlands
-NIZOZEMSKI ANTILI — Netherlands Antilles
+13. NIZOZEMSKI ANTILI — Aruba
+28. NIZOZEMSKI ANTILI — Bonaire, Sint Eustatius and Saba
+57. NIZOZEMSKI ANTILI — Curaçao
+200. NIZOZEMSKI ANTILI — Sint Maarten
 83. NJEMAČKA — Germany
 165. NORVEŠKA — Norway
 156. NOVA KALEDONIJA — New Caledonia
@@ -173,7 +176,7 @@ NIZOZEMSKI ANTILI — Netherlands Antilles
 178. PORTORIKO — Puerto Rico
 177. PORTUGAL — Portugal
 216. REPUBLIKA KINA NA TAJVANU — Taiwan
-117. REPUBLIKA KOREJA — Korea South
+117. REPUBLIKA KOREJA — Korea
 180. REUNION — Réunion
 183. RUANDA — Rwanda
 181. RUMUNJSKA — Romania
@@ -228,7 +231,6 @@ NIZOZEMSKI ANTILI — Netherlands Antilles
 237. UZBEKISTAN — Uzbekistan
 244. VALIS I FUTUNA — Wallis & Futuna
 238. VANUATU — Vanuatu
-240. VENEZUELA — Venezuela
 241. VIJETNAM — Vietnam
 247. ZAMBIJA — Zambia
 248. ZIMBABVE — Zimbabwe
