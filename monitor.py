@@ -245,6 +245,7 @@ PDF_ENTRIES = [
     "UZBEKISTAN",
     "VALIS I FUTUNA",
     "VANUATU (pismovne pošiljke i paketi)",
+    "VENEZUELA (pismovne pošiljke i paketi)",
     "VIJETNAM",
     "ZAMBIJA",
     "ZIMBABVE (samo pismovne pošiljke i paketi)",
@@ -404,17 +405,12 @@ MAPPING = {
     "NIKARAGVA": (158, "Nicaragua"),
     "NIUE": (161, "Niue"),
     "NIZOZEMSKA": (155, "Netherlands"),
-
-    # EXACT SPECIAL MAPPING:
-    # NIZOZEMSKI ANTILI -> four Postcrossing destinations.
-    # Netherlands (#155) is NOT included here.
     "NIZOZEMSKI ANTILI": [
         (13, "Aruba"),
         (28, "Bonaire, Sint Eustatius and Saba"),
         (57, "Curaçao"),
         (200, "Sint Maarten"),
     ],
-
     "NJEMAČKA": (83, "Germany"),
     "NORVEŠKA": (165, "Norway"),
     "NOVA KALEDONIJA": (156, "New Caledonia"),
@@ -473,6 +469,7 @@ MAPPING = {
     "TOGO": (221, "Togo"),
     "TOKELAU": (222, "Tokelau"),
     "TONGA": (223, "Tonga"),
+    "TRINIDAD I TO TOBAGO": (224, "Trinidad and Tobago"),
     "TRINIDAD I TOBAGO": (224, "Trinidad and Tobago"),
     "TRISTAN DA KUNA": (185, "Saint Helena, Ascension and Tristan da Cunha"),
     "TUNIS": (225, "Tunisia"),
@@ -492,6 +489,7 @@ MAPPING = {
     "UZBEKISTAN": (237, "Uzbekistan"),
     "VALIS I FUTUNA": (244, "Wallis & Futuna"),
     "VANUATU": (238, "Vanuatu"),
+    "VENEZUELA": (240, "Venezuela"),
     "VIJETNAM": (241, "Vietnam"),
     "ZAMBIJA": (247, "Zambia"),
     "ZIMBABVE": (248, "Zimbabwe"),
@@ -502,11 +500,9 @@ def normalize_text(text):
     text = text.replace("\u00a0", " ")
     text = text.replace("\r", " ")
     text = text.replace("\n", " ")
-
     text = text.replace("–", " – ")
     text = text.replace("—", " — ")
 
-    # Known PDF extraction glitches.
     text = text.replace(
         "GVINEJA – BISAUHAITI",
         "GVINEJA – BISAU HAITI",
@@ -518,14 +514,10 @@ def normalize_text(text):
     )
 
     text = re.sub(r"\s+", " ", text)
-
     return text.strip()
 
 
 def remove_parentheses(text):
-    """
-    Remove all parenthetical text from a string.
-    """
     text = re.sub(r"\s*\([^)]*\)", "", text)
     text = re.sub(r"\s+", " ", text)
     return text.strip()
@@ -567,13 +559,12 @@ def extract_pdf_text():
     print("Extracting PDF text...")
 
     with pymupdf.open(PDF_FILE) as document:
-        pages = []
+        pages = [
+            page.get_text("text")
+            for page in document
+        ]
 
-        for page in document:
-            pages.append(page.get_text("text"))
-
-    text = "\n".join(pages)
-    text = normalize_text(text)
+    text = normalize_text("\n".join(pages))
 
     if not text:
         raise RuntimeError(
@@ -599,25 +590,20 @@ def find_pdf_entries(text):
         expected_normalized = normalize_text(expected)
         expected_search = expected_normalized.casefold()
 
-        # First try the complete entry, including parentheses.
         found_at = search_text.find(
             expected_search,
             position,
         )
 
         if found_at != -1:
-            end_at = (
+            position = (
                 found_at
                 + len(expected_normalized)
             )
 
             found_entries.append(expected)
-            position = end_at
-
             continue
 
-        # If the PDF extractor omitted the parenthetical restriction,
-        # try the base country/place name.
         base = base_entry(expected)
         base_normalized = normalize_text(base)
         base_search = base_normalized.casefold()
@@ -645,21 +631,20 @@ def find_pdf_entries(text):
             raise RuntimeError(
                 f"Could not find PDF entry #{index}:\n\n"
                 f"{expected}\n\n"
-                f"Search context:\n\n"
-                f"{context}"
+                f"Search context:\n\n{context}"
             )
 
-        end_at = (
+        position = (
             found_at
             + len(base_normalized)
         )
 
         found_entries.append(expected)
-        position = end_at
 
         print(
-            f"  Note: entry #{index} matched "
-            f"by base name: {base}"
+            "  Note: entry "
+            f"#{index} matched by base name: "
+            f"{base}"
         )
 
     print(
@@ -676,19 +661,6 @@ def create_output(entries):
 
     for entry in entries:
         source = base_entry(entry)
-
-        # ---------------------------------------------------------------
-        # SPECIAL CASE:
-        #
-        # NIZOZEMSKI ANTILI becomes exactly four Postcrossing destinations.
-        #
-        # 13. Aruba
-        # 28. Bonaire, Sint Eustatius and Saba
-        # 57. Curaçao
-        # 200. Sint Maarten
-        #
-        # Netherlands (#155) is NOT included.
-        # ---------------------------------------------------------------
 
         if source == "NIZOZEMSKI ANTILI":
             destinations = MAPPING[
@@ -708,30 +680,14 @@ def create_output(entries):
 
             continue
 
-        # ---------------------------------------------------------------
-        # NORMAL ENTRY
-        #
-        # The source is already stripped of parentheses, so entries such
-        # as:
-        #
-        # KAJMANSKI OTOCI (pismovne pošiljke i paketi)
-        #
-        # correctly become:
-        #
-        # KAJMANSKI OTOCI
-        #
-        # before the mapping lookup.
-        # ---------------------------------------------------------------
-
         if source not in MAPPING:
             raise RuntimeError(
-                "No Postcrossing mapping exists for "
-                f"PDF entry: {source}"
+                "No Postcrossing mapping exists "
+                f"for PDF entry: {source}"
             )
 
         mapping = MAPPING[source]
 
-        # Normal entries have exactly one destination.
         if (
             not isinstance(mapping, tuple)
             or len(mapping) != 2
@@ -770,10 +726,7 @@ def create_output(entries):
         encoding="utf-8",
     )
 
-    print(
-        f"Created {OUTPUT_FILE}"
-    )
-
+    print(f"Created {OUTPUT_FILE}")
     print(
         f"Output lines: {len(output_lines)}"
     )
@@ -781,21 +734,16 @@ def create_output(entries):
     return output_lines
 
 
-def validate_output(
-    entries,
-    output_lines,
-):
+def validate_output(entries, output_lines):
     print("Validating output...")
 
-    expected_output_lines = 0
-
-    for entry in entries:
-        source = base_entry(entry)
-
-        if source == "NIZOZEMSKI ANTILI":
-            expected_output_lines += 4
-        else:
-            expected_output_lines += 1
+    expected_output_lines = sum(
+        4
+        if base_entry(entry)
+        == "NIZOZEMSKI ANTILI"
+        else 1
+        for entry in entries
+    )
 
     if len(output_lines) != expected_output_lines:
         raise RuntimeError(
@@ -804,15 +752,13 @@ def validate_output(
             f"got {len(output_lines)}."
         )
 
-    # Absolutely no parentheses may remain.
     for line in output_lines:
         if "(" in line or ")" in line:
             raise RuntimeError(
-                f"Parentheses remain in output:\n"
+                "Parentheses remain in output:\n"
                 f"{line}"
             )
 
-    # Australia must occur twice.
     australia_count = sum(
         1
         for line in output_lines
@@ -825,7 +771,6 @@ def validate_output(
             f"got {australia_count}."
         )
 
-    # New Zealand must occur twice.
     new_zealand_count = sum(
         1
         for line in output_lines
@@ -838,7 +783,6 @@ def validate_output(
             f"got {new_zealand_count}."
         )
 
-    # Christmas Island must occur twice.
     christmas_count = sum(
         1
         for line in output_lines
@@ -852,7 +796,6 @@ def validate_output(
             f"got {christmas_count}."
         )
 
-    # Cayman Islands must be present.
     cayman_lines = [
         line
         for line in output_lines
@@ -863,13 +806,37 @@ def validate_output(
     if len(cayman_lines) != 1:
         raise RuntimeError(
             "Expected exactly one Cayman Islands "
-            "line, got "
-            f"{len(cayman_lines)}."
+            "line, "
+            f"got {len(cayman_lines)}."
         )
 
-    # ---------------------------------------------------------------
-    # Verify exact NIZOZEMSKI ANTILI mapping.
-    # ---------------------------------------------------------------
+    venezuela_lines = [
+        line
+        for line in output_lines
+        if "VENEZUELA — Venezuela" in line
+    ]
+
+    if len(venezuela_lines) != 1:
+        raise RuntimeError(
+            "Expected exactly one "
+            "VENEZUELA — Venezuela line, "
+            f"got {len(venezuela_lines)}."
+        )
+
+    expected_venezuela = (
+        "240. VENEZUELA — Venezuela"
+    )
+
+    if venezuela_lines != [
+        expected_venezuela
+    ]:
+        raise RuntimeError(
+            "Venezuela mapping is incorrect.\n\n"
+            "Expected:\n"
+            f"{expected_venezuela}\n\n"
+            "Got:\n"
+            + "\n".join(venezuela_lines)
+        )
 
     antilles_lines = [
         line
@@ -893,21 +860,18 @@ def validate_output(
             "incorrect.\n\n"
             "Expected:\n"
             + "\n".join(expected_antilles)
-            + "\n\n"
-            "Got:\n"
+            + "\n\nGot:\n"
             + "\n".join(antilles_lines)
         )
 
-    # Netherlands must NOT be included in the
-    # NIZOZEMSKI ANTILI expansion.
     for line in antilles_lines:
         if "Netherlands" in line:
             raise RuntimeError(
-                "ERROR: Netherlands was incorrectly "
-                "included in NIZOZEMSKI ANTILI."
+                "ERROR: Netherlands was "
+                "incorrectly included in "
+                "NIZOZEMSKI ANTILI."
             )
 
-    # But the separate NIZOZEMSKA entry MUST remain.
     netherlands_lines = [
         line
         for line in output_lines
@@ -933,6 +897,7 @@ def validate_output(
     print("New Zealand entries:   2")
     print("Christmas Island:      2")
     print("Cayman Islands:        1")
+    print("Venezuela:             1")
     print("Netherlands Antilles:  4")
     print("Netherlands in Antilles: NO")
 
