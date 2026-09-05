@@ -3,13 +3,14 @@ import urllib.request
 from pathlib import Path
 
 PDF_URL = "https://www.post.ba/media/files/POPIS%20DR%C5%BDAVA%20MEDJ%20PROMET%2013_12_2023.pdf"
-OUTPUT_FILE = Path("output.txt")
+
 PDF_FILE = Path("mostar_post.pdf")
+OUTPUT_FILE = Path("output.txt")
 
 
-# -------------------------------------------------------------------
-# Postcrossing country/territory numbers
-# -------------------------------------------------------------------
+# ============================================================
+# POSTCROSSING NUMBERS
+# ============================================================
 
 POSTCROSSING = {
     "AFGANISTAN": (1, "Afghanistan"),
@@ -31,48 +32,36 @@ POSTCROSSING = {
     "BAHREIN": (18, "Bahrain"),
     "BANGLADEŠ": (19, "Bangladesh"),
     "BARBADOS": (20, "Barbados"),
-    "BJELORUSIJA": (21, "Belarus"),
     "BELGIJA": (22, "Belgium"),
     "BELIZE": (23, "Belize"),
     "BENIN": (24, "Benin"),
     "BERMUDA": (25, "Bermuda"),
-    "BUTAN": (26, "Bhutan"),
-    "BOLIVIJA": (27, "Bolivia"),
-    "BOSNA I HERCEGOVINA": (29, "Bosnia-Herzegovina"),
+    "BJELORUSIJA": (21, "Belarus"),
+    "BJELOKOSNA OBALA": (54, "Côte d'Ivoire"),
     "BOCVANA": (30, "Botswana"),
+    "BOLIVIJA": (27, "Bolivia"),
+    "BOŽIĆNI OTOK": (46, "Christmas Island"),
     "BRAZIL": (31, "Brazil"),
     "BRITANSKI DJEVIČANSKI OTOCI": (242, "Virgin Islands (UK)"),
     "BRUNEJ DARUSSALAM": (33, "Brunei"),
     "BUGARSKA": (34, "Bulgaria"),
     "BURKINA FASO": (35, "Burkina Faso"),
     "BURUNDI": (36, "Burundi"),
-    "KABO VERDE": (37, "Cabo Verde"),
-    "KAMBODŽA": (38, "Cambodia"),
-    "KAMERUN": (39, "Cameroon"),
-    "KANADA": (40, "Canada"),
-    "ČAD": (43, "Chad"),
-    "ČILE": (44, "Chile"),
-    "KINA": (45, "China"),
-    "KOKOSOVI OTOCI": (47, "Cocos Islands"),
-    "KOLUMBIJA": (48, "Colombia"),
-    "KOMORI": (49, "Comoros"),
-    "KONGO": (50, "Congo"),
-    "DEMOKRATSKA REPUBLIKA KONGO": (51, "Dem. Rep. Of Congo"),
-    "KUKOVI OTOCI": (52, "Cook Islands"),
-    "KOSTARIKA": (53, "Costa Rica"),
-    "BJELOKOSNA OBALA": (54, "Côte d'Ivoire"),
-    "HRVATSKA": (55, "Croatia"),
-    "KUBA": (56, "Cuba"),
-    "CURAÇAO": (57, "Curaçao"),
+    "BUTAN": (26, "Bhutan"),
     "CIPAR": (58, "Cyprus"),
+    "CRNA GORA": (147, "Montenegro"),
+    "ČAD": (43, "Chad"),
     "ČEŠKA REPUBLIKA": (59, "Czechia"),
+    "ČILE": (44, "Chile"),
     "DANSKA": (60, "Denmark"),
-    "DŽIBUTI": (61, "Djibouti"),
+    "DEMOKRATSKA NARODNA REPUBLIKA KOREJA": (116, "Korea(North)"),
+    "DEMOKRATSKA REPUBLIKA KONGO": (51, "Dem. Rep. Of Congo"),
     "DOMINIKA": (62, "Dominica"),
     "DOMINIKANSKA REPUBLIKA": (63, "Dominican Republic"),
-    "EKVADOR": (64, "Ecuador"),
+    "DRŽAVA VATIKANSKOGA GRADA": (239, "Vatican"),
+    "DŽIBUTI": (61, "Djibouti"),
     "EGIPAT": (65, "Egypt"),
-    "SALVADOR": (66, "El Salvador"),
+    "EKVADOR": (64, "Ecuador"),
     "EKVATORSKA GVINEJA": (67, "Equatorial Guinea"),
     "ERITREJA": (68, "Eritrea"),
     "ESTONIJA": (69, "Estonia"),
@@ -80,39 +69,37 @@ POSTCROSSING = {
     "ETIOPIJA": (71, "Ethiopia"),
     "FAKLANDI": (72, "Falkland Islands /Malvinas"),
     "FIDŽI": (74, "Fiji"),
+    "FILIPINI": (174, "Philippines"),
     "FINSKA": (75, "Finland"),
     "FRANCUSKA": (76, "France"),
     "FRANCUSKA GVAJANA": (77, "French Guiana"),
     "FRANCUSKA POLINEZIJA": (78, "French Polynesia"),
     "GABON": (80, "Gabon"),
     "GAMBIJA": (81, "Gambia"),
-    "GRUZIJA": (82, "Georgia"),
-    "NJEMAČKA": (83, "Germany"),
     "GANA": (84, "Ghana"),
     "GERNZI": (92, "Guernsey"),
     "GIBRALTAR": (85, "Gibraltar"),
     "GRČKA": (86, "Greece"),
-    "GRENLAND": (87, "Greenland"),
     "GRENADA": (88, "Grenada"),
-    "GVADALUPA": (89, "Guadeloupe"),
+    "GRENLAND": (87, "Greenland"),
+    "GRUZIJA": (82, "Georgia"),
     "GUAM": (90, "Guam"),
+    "GVADALUPA": (89, "Guadeloupe"),
+    "GVAJANA": (95, "Guyana"),
     "GVATEMALA": (91, "Guatemala"),
     "GVINEJA": (93, "Guinea"),
     "GVINEJA – BISAU": (94, "Guinea-Bissau"),
-    "GVINEJA-BISAU": (94, "Guinea-Bissau"),
-    "GVAJANA": (95, "Guyana"),
+    "GVINEJA - BISAU": (94, "Guinea-Bissau"),
     "HAITI": (96, "Haiti"),
     "HONDURAS": (97, "Honduras"),
     "HONG KONG": (98, "Hong Kong"),
-    "MAĐARSKA": (99, "Hungary"),
-    "ISLAND": (100, "Iceland"),
+    "HRVATSKA": (55, "Croatia"),
     "INDIJA": (101, "India"),
     "INDONEZIJA": (102, "Indonesia"),
-    "IRAN": (103, "Iran"),
     "IRAK": (104, "Iraq"),
+    "IRAN": (103, "Iran"),
     "IRSKA": (105, "Ireland"),
-    "OTOK MAN": (106, "Isle of Man"),
-    "IZRAEL": (107, "Israel"),
+    "ISLAND": (100, "Iceland"),
     "ITALIJA": (108, "Italy"),
     "JAMAJKA": (109, "Jamaica"),
     "JAPAN": (110, "Japan"),
@@ -120,69 +107,84 @@ POSTCROSSING = {
     "JUŽNA AFRIKA": (205, "South Africa"),
     "JUŽNA DŽORDŽIJA": (206, "South Georgia and S. Sandwich Islands"),
     "JUŽNI SENDVIČ OTOCI": (206, "South Georgia and S. Sandwich Islands"),
+    "KABO VERDE": (37, "Cabo Verde"),
     "KAJMANSKI OTOCI": (41, "Cayman Islands"),
+    "KAMBODŽA": (38, "Cambodia"),
+    "KAMERUN": (39, "Cameroon"),
+    "KANADA": (40, "Canada"),
+    "KATAR": (179, "Qatar"),
     "KAZAHSTAN": (113, "Kazakhstan"),
     "KENIJA": (114, "Kenya"),
+    "KINA": (45, "China"),
     "KIRGISTAN": (120, "Kyrgyzstan"),
     "KIRIBATI": (115, "Kiribati"),
+    "KOKOSOVI OTOCI": (47, "Cocos Islands"),
+    "KOLUMBIJA": (48, "Colombia"),
+    "KOMORI": (49, "Comoros"),
+    "KONGO": (50, "Congo"),
     "KOSOVO": (118, "Kosovo"),
-    "KATAR": (179, "Qatar"),
+    "KOSTARIKA": (53, "Costa Rica"),
+    "KUBA": (56, "Cuba"),
+    "KUKOVI OTOCI": (52, "Cook Islands"),
     "KUVAJT": (119, "Kuwait"),
     "LAOSKA NARODNA DEMOKRATSKA REPUBLIKA": (121, "Laos"),
     "LATVIJA": (122, "Latvia"),
     "LESOTO": (124, "Lesotho"),
     "LIBANON": (123, "Lebanon"),
     "LIBERIJA": (125, "Liberia"),
-    "LIBIJA": (126, "Libya"),
     "LIHTENŠTAJN": (127, "Liechtenstein"),
     "LITVA": (128, "Lithuania"),
     "LUKSEMBURG": (129, "Luxembourg"),
     "MADAGASKAR": (131, "Madagascar"),
+    "MAĐARSKA": (99, "Hungary"),
+    "MAJOT": (141, "Mayotte"),
+    "MAKAO": (130, "Macao"),
+    "MAKEDONIJA": (164, "North Macedonia"),
     "MALAVI": (132, "Malawi"),
-    "MALEZIJA": (133, "Malaysia"),
     "MALDIVI": (134, "Maldives"),
+    "MALEZIJA": (133, "Malaysia"),
     "MALI": (135, "Mali"),
     "MALTA": (136, "Malta"),
+    "MARIJANSKI OTOCI": (163, "Northern Mariana Islands"),
+    "MAROKO": (149, "Morocco"),
     "MARŠALOVI OTOCI": (137, "Marshall Islands"),
     "MARTINIK": (138, "Martinique"),
     "MAURICIJUS": (140, "Mauritius"),
-    "MAJOT": (141, "Mayotte"),
     "MEKSIKO": (142, "Mexico"),
     "MIKRONEZIJA": (143, "Micronesia"),
+    "MJANMAR": (151, "Myanmar"),
     "MOLDAVIJA": (144, "Moldova"),
     "MONAKO": (145, "Monaco"),
     "MONGOLIJA": (146, "Mongolia"),
-    "CRNA GORA": (147, "Montenegro"),
     "MONTSERAT": (148, "Montserrat"),
-    "MAROKO": (149, "Morocco"),
     "MOZAMBIK": (150, "Mozambique"),
-    "MJANMAR": (151, "Myanmar"),
     "NAMIBIJA": (152, "Namibia"),
     "NAURU": (153, "Nauru / Naoero"),
     "NEPAL": (154, "Nepal"),
-    "NIZOZEMSKA": (155, "Netherlands"),
-    "NOVA KALEDONIJA": (156, "New Caledonia"),
-    "NOVI ZELAND": (157, "New Zealand"),
-    "NIKARAGVA": (158, "Nicaragua"),
     "NIGER": (159, "Niger"),
     "NIGERIJA": (160, "Nigeria"),
+    "NIKARAGVA": (158, "Nicaragua"),
     "NIUE": (161, "Niue"),
-    "OTOK NORFOLK": (162, "Norfolk Island"),
-    "MARIJANSKI OTOCI": (163, "Northern Mariana Islands"),
-    "MAKEDONIJA": (164, "North Macedonia"),
+    "NIZOZEMSKA": (155, "Netherlands"),
+    "NIZOZEMSKI ANTILI": (None, "Netherlands Antilles"),
+    "NJEMAČKA": (83, "Germany"),
     "NORVEŠKA": (165, "Norway"),
+    "NOVA KALEDONIJA": (156, "New Caledonia"),
+    "NOVI ZELAND": (157, "New Zealand"),
     "OMAN": (166, "Oman"),
+    "OTOK MAN": (106, "Isle of Man"),
+    "OTOK NORFOLK": (162, "Norfolk Island"),
+    "OVČJI OTOCI": (73, "Faroe Islands"),
     "PAKISTAN": (167, "Pakistan"),
     "PALAU": (168, "Palau"),
     "PANAMA": (170, "Panama"),
     "PAPUA NOVA GVINEJA": (171, "Papua New Guinea"),
     "PARAGVAJ": (172, "Paraguay"),
     "PERU": (173, "Peru"),
-    "FILIPINI": (174, "Philippines"),
     "PITKERN": (175, "Pitcairn"),
     "POLJSKA": (176, "Poland"),
-    "PORTUGAL": (177, "Portugal"),
     "PORTORIKO": (178, "Puerto Rico"),
+    "PORTUGAL": (177, "Portugal"),
     "REPUBLIKA KINA NA TAJVANU": (216, "Taiwan"),
     "REPUBLIKA KOREJA": (117, "Korea(South)"),
     "REUNION": (180, "Réunion"),
@@ -191,6 +193,7 @@ POSTCROSSING = {
     "RUSIJA": (182, "Russia"),
     "SAD": (235, "U.S.A."),
     "SALOMONOVI OTOCI": (203, "Solomon Islands"),
+    "SALVADOR": (66, "El Salvador"),
     "SAMOA": (191, "Samoa"),
     "SAN MARINO": (192, "San Marino"),
     "SAUDIJSKA ARABIJA": (194, "Saudi Arabia"),
@@ -219,7 +222,6 @@ POSTCROSSING = {
     "TAJLAND": (219, "Thailand"),
     "TANZANIJA": (218, "Tanzania"),
     "TIMOR - LESTE": (220, "Timor-Leste"),
-    "TIMOR-LESTE": (220, "Timor-Leste"),
     "TOGO": (221, "Togo"),
     "TOKELAU": (222, "Tokelau"),
     "TONGA": (223, "Tonga"),
@@ -232,6 +234,7 @@ POSTCROSSING = {
     "TUVALU": (229, "Tuvalu"),
     "UGANDA": (230, "Uganda"),
     "UJEDINJENI ARAPSKI EMIRATI": (232, "United Arab Emirates"),
+    "UJEDINJENI ARAPSLI EMIRATI": (232, "United Arab Emirates"),
     "UJEDINJENA KRALJEVINA VELIKE BRITANIJE I SJEVERNE IRSKE": (
         233,
         "United Kingdom",
@@ -241,24 +244,23 @@ POSTCROSSING = {
     "UZBEKISTAN": (237, "Uzbekistan"),
     "VALIS I FUTUNA": (244, "Wallis & Futuna"),
     "VANUATU": (238, "Vanuatu"),
-    "DRŽAVA VATIKANSKOGA GRADA": (239, "Vatican"),
     "VENEZUELA": (240, "Venezuela"),
     "VIJETNAM": (241, "Vietnam"),
-    "AMERIČKI DJEVIČANSKI OTOCI": (243, "Virgin Islands of the USA"),
     "ZAMBIJA": (247, "Zambia"),
     "ZIMBABVE": (248, "Zimbabwe"),
 }
 
 
-# -------------------------------------------------------------------
-# Exact order of entries appearing in the Mostar Post PDF.
+# ============================================================
+# COUNTRY NAMES AS THEY APPEAR IN THE PDF
 #
-# IMPORTANT:
-# Duplicates are intentionally present.
-# Do NOT convert this list to a set and do NOT deduplicate it.
-# -------------------------------------------------------------------
+# Parenthetical service information is intentionally NOT part
+# of these names.
+#
+# Duplicates are intentional.
+# ============================================================
 
-PDF_ENTRIES = [
+PDF_COUNTRIES = [
     "ALBANIJA",
     "ALŽIR",
     "AMERIČKI DJEVIČANSKI OTOCI",
@@ -269,10 +271,10 @@ PDF_ENTRIES = [
     "ANTIGVA I BARBUDA",
     "ARGENTINA",
     "ARMENIJA",
-    "ARUBA (pismovne pošiljke I paketi)",
+    "ARUBA",
     "ASENŠN",
-    "AUSTRALIJA (pismovne pošiljke)",
-    "AUSTRALIJA (EMS pošiljka i paketi maksimalne mase 10 kg)",
+    "AUSTRALIJA",
+    "AUSTRALIJA",
     "AUSTRIJA",
     "AZERBEJDŽAN",
     "BAHAMI",
@@ -285,17 +287,17 @@ PDF_ENTRIES = [
     "BERMUDA",
     "BJELOKOSNA OBALA",
     "BJELORUSIJA",
-    "BOCVANA (pismovne pošiljke I paketi)",
+    "BOCVANA",
     "BOLIVIJA",
-    "BOŽIĆNI OTOK (AUSTRALIJA)",
-    "BOŽIĆNI OTOK (PACIFIC)",
+    "BOŽIĆNI OTOK",
+    "BOŽIĆNI OTOK",
     "BRAZIL",
     "BRITANSKI DJEVIČANSKI OTOCI",
     "BRUNEJ DARUSSALAM",
     "BUGARSKA",
     "BURKINA FASO",
     "BURUNDI",
-    "BUTAN (pismovne pošiljke I paketi)",
+    "BUTAN",
     "CIPAR",
     "CRNA GORA",
     "ČAD",
@@ -315,7 +317,7 @@ PDF_ENTRIES = [
     "ESTONIJA",
     "ESVATINI",
     "ETIOPIJA",
-    "FAKLANDI (MALVINI)",
+    "FAKLANDI",
     "FIDŽI",
     "FILIPINI",
     "FINSKA",
@@ -355,7 +357,7 @@ PDF_ENTRIES = [
     "JUŽNA DŽORDŽIJA",
     "JUŽNI SENDVIČ OTOCI",
     "KABO VERDE",
-    "KAJMANSKI OTOCI (pismovne pošiljke i paketi)",
+    "KAJMANSKI OTOCI",
     "KAMBODŽA",
     "KAMERUN",
     "KANADA",
@@ -374,7 +376,7 @@ PDF_ENTRIES = [
     "KUBA",
     "KUKOVI OTOCI",
     "KUVAJT",
-    "LAOSKA NARODNA DEMOKRATSKA REPUBLIKA (samo pismovne pošiljke I paketi)",
+    "LAOSKA NARODNA DEMOKRATSKA REPUBLIKA",
     "LATVIJA",
     "LESOTO",
     "LIBANON",
@@ -382,7 +384,7 @@ PDF_ENTRIES = [
     "LIHTENŠTAJN",
     "LITVA",
     "LUKSEMBURG",
-    "MADAGASKAR (samo pismovne pošiljke i paketi)",
+    "MADAGASKAR",
     "MAĐARSKA",
     "MAJOT",
     "MAKAO",
@@ -402,7 +404,7 @@ PDF_ENTRIES = [
     "MJANMAR",
     "MOLDAVIJA",
     "MONAKO",
-    "MONGOLIJA (samo pismovne pošiljke)",
+    "MONGOLIJA",
     "MONTSERAT",
     "MOZAMBIK",
     "NAMIBIJA",
@@ -413,12 +415,12 @@ PDF_ENTRIES = [
     "NIKARAGVA",
     "NIUE",
     "NIZOZEMSKA",
-    "NIZOZEMSKI ANTILI (samo pismovne pošiljke i paketi)",
+    "NIZOZEMSKI ANTILI",
     "NJEMAČKA",
     "NORVEŠKA",
     "NOVA KALEDONIJA",
-    "NOVI ZELAND (samo pismovne pošiljke)",
-    "NOVI ZELAND (EMS pošiljke I paketi maksimalne mase 10kg)",
+    "NOVI ZELAND",
+    "NOVI ZELAND",
     "OMAN",
     "OTOK MAN",
     "OTOK NORFOLK",
@@ -488,61 +490,53 @@ PDF_ENTRIES = [
     "URUGVAJ",
     "UZBEKISTAN",
     "VALIS I FUTUNA",
-    "VANUATU (pismovne pošiljke i paketi)",
-    "VENEZUELA (pismovne pošiljke i paketi)",
+    "VANUATU",
+    "VENEZUELA",
     "VIJETNAM",
     "ZAMBIJA",
-    "ZIMBABVE (samo pismovne pošiljke i paketi)",
+    "ZIMBABVE",
 ]
 
 
-# -------------------------------------------------------------------
-# Helpers
-# -------------------------------------------------------------------
+# ============================================================
+# HELPERS
+# ============================================================
 
-def normalize_spaces(text):
-    """Collapse all whitespace into single spaces."""
-    return re.sub(r"\s+", " ", text).strip()
+def normalize_text(text):
+    text = text.replace("\r", " ")
+    text = text.replace("\n", " ")
+    text = text.replace("\t", " ")
 
+    # Normalize dash variants.
+    text = text.replace("—", "-")
+    text = text.replace("–", "-")
+    text = text.replace("-", "-")
 
-def normalize_dashes(text):
-    """Normalize different dash characters."""
-    return (
-        text.replace("–", "-")
-        .replace("—", "-")
-        .replace("-", "-")
-    )
+    # Collapse whitespace.
+    text = re.sub(r"\s+", " ", text)
+
+    return text.strip()
 
 
 def remove_parentheses(text):
     """
-    Remove parentheses and EVERYTHING inside them.
-    Repeat until no parenthetical content remains.
+    Remove ALL parenthetical text.
     """
-    while re.search(r"\([^()]*\)", text):
-        text = re.sub(r"\([^()]*\)", " ", text)
 
-    return normalize_spaces(text)
+    while "(" in text and ")" in text:
+        new_text = re.sub(r"\([^()]*\)", " ", text)
 
+        if new_text == text:
+            break
 
-def clean_country_name(name):
-    """Clean an individual PDF country entry."""
-    name = remove_parentheses(name)
-    name = normalize_dashes(name)
-    name = normalize_spaces(name)
+        text = new_text
 
-    # PDF-specific spelling/extraction corrections.
-    replacements = {
-        "TIMOR - LESTE": "TIMOR-LESTE",
-        "GVINEJA - BISAU": "GVINEJA – BISAU",
-        "OVČJI OTOCI": "OVČJI OTOCI",
-    }
-
-    return replacements.get(name, name)
+    return normalize_text(text)
 
 
 def download_pdf():
-    """Download the current PDF from Pošta."""
+    print("Downloading Mostar Post PDF...")
+
     request = urllib.request.Request(
         PDF_URL,
         headers={
@@ -560,227 +554,291 @@ def download_pdf():
 
     if not data.startswith(b"%PDF"):
         raise RuntimeError(
-            "Downloaded file does not appear to be a PDF."
+            "The downloaded file is not a valid PDF."
         )
 
     PDF_FILE.write_bytes(data)
 
+    print(f"Downloaded {len(data)} bytes.")
+
 
 def extract_pdf_text():
-    """Extract all text from the PDF."""
-    try:
-        import fitz
-    except ImportError:
-        raise RuntimeError(
-            "PyMuPDF is not installed. "
-            "Add PyMuPDF to the GitHub Actions dependencies."
-        )
+    print("Extracting PDF text...")
 
-    document = fitz.open(PDF_FILE)
+    # Use the modern PyMuPDF import.
+    import pymupdf
 
-    pages = []
+    document = pymupdf.open(PDF_FILE)
+
+    parts = []
 
     for page in document:
-        pages.append(page.get_text("text"))
+        parts.append(page.get_text("text"))
 
     document.close()
 
-    return normalize_spaces(" ".join(pages))
+    text = normalize_text(" ".join(parts))
+
+    if not text:
+        raise RuntimeError(
+            "No text could be extracted from the PDF."
+        )
+
+    return text
 
 
-# -------------------------------------------------------------------
-# Parsing
-# -------------------------------------------------------------------
+# ============================================================
+# PARSER
+# ============================================================
 
-def extract_entries_from_pdf(text):
+def build_search_text(text):
     """
-    Find the PDF's country entries in their original order.
+    Prepare the PDF text for matching.
 
-    The PDF extraction can sometimes put multiple countries on one
-    line. Therefore we do NOT depend on PDF line breaks.
+    Parenthetical information is removed completely BEFORE
+    country matching.
 
-    Instead, we search for the known PDF entries in sequence.
-    This preserves duplicates because PDF_ENTRIES itself contains
-    duplicates.
+    This means differences such as:
+
+        VANUATU (pismovne pošiljke i paketi)
+
+    and
+
+        VANUATU
+
+    both become simply:
+
+        VANUATU
     """
 
-    text = normalize_spaces(text)
-    text = normalize_dashes(text)
+    # Remove title.
+    text = re.sub(
+        r"POPIS\s+DRŽAVA\s+U\s+KOJE\s+JE\s+MOGUĆE\s+SLATI\s+POŠILJKE\s*:?",
+        " ",
+        text,
+        flags=re.IGNORECASE,
+    )
 
-    # Ignore the title.
-    title = "POPIS DRŽAVA U KOJE JE MOGUĆE SLATI POŠILJKE:"
-    if title in text:
-        text = text.split(title, 1)[1]
+    # Remove footer/date.
+    text = re.split(
+        r"Posljednje\s+izmjene",
+        text,
+        maxsplit=1,
+        flags=re.IGNORECASE,
+    )[0]
 
-    # Ignore the final date/footer.
-    footer = "Posljednje izmjene"
-    if footer in text:
-        text = text.split(footer, 1)[0]
+    # Remove all parenthetical text.
+    text = remove_parentheses(text)
+
+    return normalize_text(text)
+
+
+def normalize_country_for_matching(name):
+    name = normalize_text(name)
+
+    # Normalize dash spacing.
+    name = re.sub(r"\s*-\s*", "-", name)
+
+    return name.upper()
+
+
+def find_country_entries(text):
+    """
+    Locate every PDF country in its original order.
+
+    IMPORTANT:
+    We process PDF_COUNTRIES sequentially.
+
+    Therefore:
+
+        AUSTRALIJA
+        AUSTRALIJA
+
+    remains:
+
+        AUSTRALIJA
+        AUSTRALIJA
+
+    There is NO deduplication.
+    """
+
+    search_text = build_search_text(text)
+
+    # The PDF occasionally has extraction artefacts where spaces
+    # disappear around a dash.
+    search_text = search_text.replace(
+        "GVINEJA-BISAU",
+        "GVINEJA – BISAU",
+    )
+
+    # Normalize whitespace/dashes for matching.
+    search_text = normalize_country_for_matching(search_text)
 
     entries = []
     position = 0
 
-    for expected in PDF_ENTRIES:
-        expected_normalized = normalize_dashes(expected)
-
-        # Search from the previous match onward.
-        match = re.search(
-            re.escape(expected_normalized),
-            text[position:],
-            flags=re.IGNORECASE,
+    for expected in PDF_COUNTRIES:
+        expected_normalized = normalize_country_for_matching(
+            expected
         )
 
-        if match:
-            start = position + match.start()
-            end = position + match.end()
+        # Special case for the dash in Guinea-Bissau.
+        alternatives = [expected_normalized]
 
-            found = text[start:end]
-            entries.append(found)
-
-            position = end
-        else:
-            # The PDF may have changed.
-            #
-            # Do not silently invent a country. Report the missing
-            # entry so the GitHub Action makes the problem visible.
-            raise RuntimeError(
-                "Could not find expected PDF entry:\n"
-                f"    {expected}\n\n"
-                "The PDF may have changed, or its text extraction "
-                "format may be different."
+        if expected_normalized == "GVINEJA – BISAU":
+            alternatives.extend(
+                [
+                    "GVINEJA - BISAU",
+                    "GVINEJA-BISAU",
+                ]
             )
+
+        found = None
+
+        for alternative in alternatives:
+            pattern = re.escape(alternative)
+
+            match = re.search(
+                pattern,
+                search_text[position:],
+            )
+
+            if match:
+                found = match
+                break
+
+        if found is None:
+            raise RuntimeError(
+                "\nCould not find expected country entry:\n\n"
+                f"    {expected}\n\n"
+                "The PDF text extracted by PyMuPDF does not "
+                "contain this entry in the expected order.\n\n"
+                f"Parser position: {position}\n"
+            )
+
+        start = position + found.start()
+        end = position + found.end()
+
+        entries.append(expected)
+
+        position = end
 
     return entries
 
 
-def translate_entry(original):
-    """
-    Remove parenthetical information and translate the remaining
-    country name.
-    """
+# ============================================================
+# TRANSLATION
+# ============================================================
 
-    cleaned = clean_country_name(original)
+def translate_country(country):
+    country = normalize_text(country)
 
-    # Special mappings for PDF names that do not exactly match the
-    # Postcrossing country names.
+    # Normalize the dash.
+    country = country.replace("–", "-")
+    country = re.sub(r"\s*-\s*", "-", country)
+
     special = {
-        "AMERIČKI DJEVIČANSKI OTOCI": (
-            243,
-            "Virgin Islands of the USA",
+        "GVINEJA-BISAU": (
+            94,
+            "Guinea-Bissau",
         ),
-        "BJELOKOSNA OBALA": (
-            54,
-            "Côte d'Ivoire",
-        ),
+
         "BOŽIĆNI OTOK": (
             46,
             "Christmas Island",
         ),
-        "BRITANSKI DJEVIČANSKI OTOCI": (
-            242,
-            "Virgin Islands (UK)",
-        ),
-        "DEMOKRATSKA NARODNA REPUBLIKA KOREJA": (
-            116,
-            "Korea(North)",
-        ),
-        "DEMOKRATSKA REPUBLIKA KONGO": (
-            51,
-            "Dem. Rep. Of Congo",
-        ),
+
         "FAKLANDI": (
             72,
             "Falkland Islands /Malvinas",
         ),
-        "KINA": (
-            45,
-            "China",
-        ),
+
         "NIZOZEMSKI ANTILI": (
             None,
             "Netherlands Antilles",
         ),
+
         "OVČJI OTOCI": (
             73,
             "Faroe Islands",
         ),
-        "SAD": (
-            235,
-            "U.S.A.",
-        ),
-        "SALVADOR": (
-            66,
-            "El Salvador",
-        ),
+
         "REUNION": (
             180,
             "Réunion",
         ),
-        "REPUBLIKA KINA NA TAJVANU": (
-            216,
-            "Taiwan",
-        ),
-        "REPUBLIKA KOREJA": (
-            117,
-            "Korea(South)",
-        ),
-        "DRŽAVA VATIKANSKOGA GRADA": (
-            239,
-            "Vatican",
-        ),
-        "VALIS I FUTUNA": (
-            244,
-            "Wallis & Futuna",
-        ),
     }
 
-    if cleaned in special:
-        number, english = special[cleaned]
-    elif cleaned in POSTCROSSING:
-        number, english = POSTCROSSING[cleaned]
+    key = country.upper()
+
+    if key in special:
+        number, english = special[key]
+
+    elif key in POSTCROSSING:
+        number, english = POSTCROSSING[key]
+
     else:
+        # Unknown country.
+        # Keep the Croatian name rather than silently inventing
+        # a translation.
         number = None
-        english = cleaned
+        english = country
 
     if number is not None:
-        return f"{number}. {cleaned} — {english}"
+        return f"{number}. {country} — {english}"
 
-    return f"{cleaned} — {english}"
+    return f"{country} — {english}"
 
+
+# ============================================================
+# OUTPUT
+# ============================================================
 
 def create_output(entries):
     """
-    Convert every PDF occurrence to one output line.
+    Create output.txt.
 
-    No deduplication happens here.
+    Every occurrence gets its own line.
+    Nothing is deduplicated.
     """
 
     lines = []
 
     for entry in entries:
-        lines.append(translate_entry(entry))
+        # Safety check: absolutely no parentheses in output.
+        entry = remove_parentheses(entry)
 
-    return "\n".join(lines) + "\n"
+        lines.append(
+            translate_country(entry)
+        )
+
+    output = "\n".join(lines) + "\n"
+
+    # Final safety check.
+    if "(" in output or ")" in output:
+        raise RuntimeError(
+            "ERROR: Parentheses were found in output.txt."
+        )
+
+    return output
 
 
-# -------------------------------------------------------------------
-# Main
-# -------------------------------------------------------------------
+# ============================================================
+# MAIN
+# ============================================================
 
 def main():
-    print("Downloading Mostar Post PDF...")
     download_pdf()
 
-    print("Extracting PDF text...")
-    text = extract_pdf_text()
-
-    if not text:
-        raise RuntimeError("No text could be extracted from the PDF.")
+    pdf_text = extract_pdf_text()
 
     print("Parsing country entries...")
-    entries = extract_entries_from_pdf(text)
 
-    print(f"Found {len(entries)} PDF entries.")
+    entries = find_country_entries(pdf_text)
+
+    print(
+        f"Successfully found {len(entries)} country entries."
+    )
 
     output = create_output(entries)
 
@@ -789,8 +847,12 @@ def main():
         encoding="utf-8",
     )
 
-    print(f"Created {OUTPUT_FILE}")
-    print(f"Output lines: {len(entries)}")
+    print(
+        f"Created {OUTPUT_FILE} with "
+        f"{len(entries)} lines."
+    )
+
+    print("Done.")
 
 
 if __name__ == "__main__":
