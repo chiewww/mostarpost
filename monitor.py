@@ -14,6 +14,10 @@ PDF_FILE = Path("source.pdf")
 OUTPUT_FILE = Path("output.txt")
 
 
+# ----------------------------------------------------------------------
+# POSTCROSSING COUNTRY NUMBERS
+# ----------------------------------------------------------------------
+
 POSTCROSSING_DATA = """
 1 Afghanistan
 2 Åland Islands
@@ -288,19 +292,23 @@ def parse_postcrossing_numbers(data):
 POSTCROSSING_NUMBERS = parse_postcrossing_numbers(POSTCROSSING_DATA)
 
 
+# ----------------------------------------------------------------------
+# CROATIAN/BOSNIAN PDF NAME -> ENGLISH NAME
+# ----------------------------------------------------------------------
+
 TRANSLATIONS = {
-    "AFGANISTAN": "Afghanistan",
     "ALBANIJA": "Albania",
     "ALŽIR": "Algeria",
+    "AMERIČKI DJEVIČANSKI OTOCI": "Virgin Islands of the USA",
     "AMERIČKA SAMOA": "American Samoa",
     "ANDORA": "Andorra",
     "ANGOLA": "Angola",
     "ANGVILA": "Anguilla",
-    "ANTARKTIK": "Antarctica",
     "ANTIGVA I BARBUDA": "Antigua & Barbuda",
     "ARGENTINA": "Argentina",
     "ARMENIJA": "Armenia",
     "ARUBA": "Aruba",
+    "ASENŠN": "Saint Helena, Ascension and Tristan da Cunha",
     "AUSTRALIJA": "Australia",
     "AUSTRIJA": "Austria",
     "AZERBEJDŽAN": "Azerbaijan",
@@ -312,239 +320,223 @@ TRANSLATIONS = {
     "BELIZE": "Belize",
     "BENIN": "Benin",
     "BERMUDI": "Bermuda",
+    "BJELOKOSNA OBALA": "Côte d'Ivoire",
     "BJELORUSIJA": "Belarus",
-    "BUTAN": "Bhutan",
+    "BOCVANA": "Botswana",
     "BOLIVIJA": "Bolivia",
-    "BOSNA I HERCEGOVINA": "Bosnia-Herzegovina",
-    "BOTSVANA": "Botswana",
+    "BOŽIĆNI OTOK": "Christmas Island",
     "BRAZIL": "Brazil",
-    "BRITANSKI INDIJSKI OCEANSKI TERITORIJ": "British Indian Ocean Territory",
-    "BRUNEJ": "Brunei",
+    "BRITANSKI DJEVIČANSKI OTOCI": "Virgin Islands (UK)",
+    "BRUNEJ DARUSSALAM": "Brunei",
     "BUGARSKA": "Bulgaria",
     "BURKINA FASO": "Burkina Faso",
     "BURUNDI": "Burundi",
-    "ZELENORTSKA OTOČJA": "Cabo Verde",
-    "KAMBODŽA": "Cambodia",
-    "KAMERUN": "Cameroon",
-    "KANADA": "Canada",
-    "KAJMANSKI OTOCI": "Cayman Islands",
-    "SREDNJOAFRIČKA REPUBLIKA": "Central African Republic",
-    "ČAD": "Chad",
-    "ČILE": "Chile",
-    "KINA": "China",
-    "BOŽIĆNI OTOK": "Christmas Island",
-    "KOKOSOVI OTOCI": "Cocos Islands",
-    "KOLUMBIJA": "Colombia",
-    "KOMORI": "Comoros",
-    "KONGO": "Congo",
-    "DEMOKRATSKA REPUBLIKA KONGO": "Dem. Rep. Of Congo",
-    "KUKOVI OTOCI": "Cook Islands",
-    "KOSTARIKA": "Costa Rica",
-    "OBALA BJELOKOSTI": "Côte d'Ivoire",
-    "HRVATSKA": "Croatia",
-    "KUBA": "Cuba",
-    "KURASAO": "Curaçao",
+    "BUTAN": "Bhutan",
     "CIPAR": "Cyprus",
-    "ČEŠKA": "Czechia",
+    "CRNA GORA": "Montenegro",
+    "ČAD": "Chad",
+    "ČEŠKA REPUBLIKA": "Czechia",
+    "ČILE": "Chile",
     "DANSKA": "Denmark",
-    "DŽIBUTI": "Djibouti",
+    "DEMOKRATSKA NARODNA REPUBLIKA KOREJA": "Korea(North)",
+    "DEMOKRATSKA REPUBLIKA KONGO": "Dem. Rep. Of Congo",
     "DOMINIKA": "Dominica",
     "DOMINIKANSKA REPUBLIKA": "Dominican Republic",
-    "EKVADOR": "Ecuador",
+    "DRŽAVA VATIKANSKOGA GRADA": "Vatican",
+    "DŽIBUTI": "Djibouti",
     "EGIPAT": "Egypt",
-    "EL SALVADOR": "El Salvador",
+    "EKVADOR": "Ecuador",
     "EKVATORSKA GVINEJA": "Equatorial Guinea",
     "ERITREJA": "Eritrea",
     "ESTONIJA": "Estonia",
     "ESVATINI": "Eswatini /Swaziland",
     "ETIOPIJA": "Ethiopia",
     "FAKLANDI": "Falkland Islands /Malvinas",
-    "OVČJI OTOCI": "Faroe Islands",
     "FIDŽI": "Fiji",
+    "FILIPINI": "Philippines",
     "FINSKA": "Finland",
     "FRANCUSKA": "France",
     "FRANCUSKA GVAJANA": "French Guiana",
     "FRANCUSKA POLINEZIJA": "French Polynesia",
-    "FRANCUSKI JUŽNI TERITORIJI": "French Southern Territories",
     "GABON": "Gabon",
     "GAMBIJA": "Gambia",
-    "GRUZIJA": "Georgia",
-    "NJEMAČKA": "Germany",
     "GANA": "Ghana",
+    "GERNZI": "Guernsey",
     "GIBRALTAR": "Gibraltar",
     "GRČKA": "Greece",
-    "GRENLAND": "Greenland",
     "GRENADA": "Grenada",
-    "GVADALUPA": "Guadeloupe",
+    "GRENLAND": "Greenland",
+    "GRUZIJA": "Georgia",
     "GUAM": "Guam",
+    "GVADALUPA": "Guadeloupe",
+    "GVAJANA": "Guyana",
     "GVATEMALA": "Guatemala",
-    "GUERNSEY": "Guernsey",
     "GVINEJA": "Guinea",
     "GVINEJA-BISAU": "Guinea-Bissau",
-    "GVAJANA": "Guyana",
     "HAITI": "Haiti",
     "HONDURAS": "Honduras",
     "HONG KONG": "Hong Kong",
-    "MAĐARSKA": "Hungary",
-    "ISLAND": "Iceland",
+    "HRVATSKA": "Croatia",
     "INDIJA": "India",
     "INDONEZIJA": "Indonesia",
-    "IRAN": "Iran",
     "IRAK": "Iraq",
+    "IRAN": "Iran",
     "IRSKA": "Ireland",
-    "OTOK MAN": "Isle of Man",
-    "IZRAEL": "Israel",
+    "ISLAND": "Iceland",
     "ITALIJA": "Italy",
     "JAMAJKA": "Jamaica",
     "JAPAN": "Japan",
-    "JERSEY": "Jersey",
     "JORDAN": "Jordan",
+    "JUŽNA AFRIKA": "South Africa",
+    "JUŽNA DŽORDŽIJA": "South Georgia and S. Sandwich Islands",
+    "JUŽNI SENDVIČ OTOCI": "South Georgia and S. Sandwich Islands",
+    "KABO VERDE": "Cabo Verde",
+    "KAJMANSKI OTOCI": "Cayman Islands",
+    "KAMBODŽA": "Cambodia",
+    "KAMERUN": "Cameroon",
+    "KANADA": "Canada",
+    "KATAR": "Qatar",
     "KAZAHSTAN": "Kazakhstan",
     "KENIJA": "Kenya",
-    "KIRIBATI": "Kiribati",
-    "SJEVERNA KOREJA": "Korea(North)",
-    "JUŽNA KOREJA": "Korea(South)",
-    "KOSOVO": "Kosovo",
-    "KUVAJT": "Kuwait",
+    "KINA": "China",
     "KIRGISTAN": "Kyrgyzstan",
+    "KIRIBATI": "Kiribati",
+    "KOKOSOVI OTOCI": "Cocos Islands",
+    "KOLUMBIJA": "Colombia",
+    "KOMORI": "Comoros",
+    "KONGO": "Congo",
+    "KOSOVO": "Kosovo",
+    "KOSTARIKA": "Costa Rica",
+    "KUBA": "Cuba",
+    "KUKOVI OTOCI": "Cook Islands",
+    "KUVAJT": "Kuwait",
     "LAOSKA NARODNA DEMOKRATSKA REPUBLIKA": "Laos",
     "LATVIJA": "Latvia",
-    "LIBANON": "Lebanon",
     "LESOTO": "Lesotho",
+    "LIBANON": "Lebanon",
     "LIBERIJA": "Liberia",
-    "LIBIJA": "Libya",
     "LIHTENŠTAJN": "Liechtenstein",
     "LITVA": "Lithuania",
     "LUKSEMBURG": "Luxembourg",
-    "MAKAO": "Macao",
     "MADAGASKAR": "Madagascar",
+    "MAĐARSKA": "Hungary",
+    "MAJOT": "Mayotte",
+    "MAKAO": "Macao",
+    "MAKEDONIJA": "North Macedonia",
     "MALAVI": "Malawi",
-    "MALEZIJA": "Malaysia",
     "MALDIVI": "Maldives",
+    "MALEZIJA": "Malaysia",
     "MALI": "Mali",
     "MALTA": "Malta",
+    "MARIJANSKI OTOCI": "Northern Mariana Islands",
+    "MAROKO": "Morocco",
     "MARŠALOVI OTOCI": "Marshall Islands",
     "MARTINIK": "Martinique",
-    "MAURITANIJA": "Mauritania",
     "MAURICIJUS": "Mauritius",
-    "MAJOT": "Mayotte",
     "MEKSIKO": "Mexico",
     "MIKRONEZIJA": "Micronesia",
+    "MJANMAR": "Myanmar",
     "MOLDAVIJA": "Moldova",
     "MONAKO": "Monaco",
     "MONGOLIJA": "Mongolia",
-    "CRNA GORA": "Montenegro",
-    "MONTSERRAT": "Montserrat",
-    "MAROKO": "Morocco",
+    "MONTSERAT": "Montserrat",
     "MOZAMBIK": "Mozambique",
-    "MIJANMAR": "Myanmar",
     "NAMIBIJA": "Namibia",
     "NAURU": "Nauru / Naoero",
     "NEPAL": "Nepal",
-    "NIZOZEMSKA": "Netherlands",
-    "NOVA KALEDONIJA": "New Caledonia",
-    "NOVI ZELAND": "New Zealand",
-    "NIKARAGVA": "Nicaragua",
     "NIGER": "Niger",
     "NIGERIJA": "Nigeria",
+    "NIKARAGVA": "Nicaragua",
     "NIUE": "Niue",
-    "NORFOLK": "Norfolk Island",
-    "SJEVERNI MARIJANSKI OTOCI": "Northern Mariana Islands",
-    "SJEVERNA MAKEDONIJA": "North Macedonia",
+    "NIZOZEMSKA": "Netherlands",
+    "NIZOZEMSKI ANTILI": "Curaçao",
+    "NJEMAČKA": "Germany",
     "NORVEŠKA": "Norway",
+    "NOVA KALEDONIJA": "New Caledonia",
+    "NOVI ZELAND": "New Zealand",
     "OMAN": "Oman",
+    "OTOK MAN": "Isle of Man",
+    "OTOK NORFOLK": "Norfolk Island",
+    "OVČJI OTOCI": "Faroe Islands",
     "PAKISTAN": "Pakistan",
     "PALAU": "Palau",
-    "PALESTINA": "Palestine",
     "PANAMA": "Panama",
     "PAPUA NOVA GVINEJA": "Papua New Guinea",
     "PARAGVAJ": "Paraguay",
     "PERU": "Peru",
-    "FILIPINI": "Philippines",
-    "PITCAIRN": "Pitcairn",
+    "PITKERN": "Pitcairn",
     "POLJSKA": "Poland",
-    "PORTUGAL": "Portugal",
     "PORTORIKO": "Puerto Rico",
-    "KATAR": "Qatar",
+    "PORTUGAL": "Portugal",
+    "REPUBLIKA KINA NA TAJVANU": "Taiwan",
+    "REPUBLIKA KOREJA": "Korea(South)",
     "REUNION": "Réunion",
+    "RUANDA": "Rwanda",
     "RUMUNJSKA": "Romania",
     "RUSIJA": "Russia",
-    "RUANDA": "Rwanda",
-    "SVETI BARTOLOMEJ": "Saint Barthélemy",
-    "SVETA HELENA": "Saint Helena, Ascension and Tristan da Cunha",
-    "SVETI KIT I NEVIS": "Saint Kitts and Nevis",
-    "SVETA LUCIJA": "Saint Lucia",
-    "SVETI MARTIN": "Saint Martin",
-    "SVETI PETAR I MIKELO": "Saint Pierre & Miquelon",
-    "SVETI VINCENT I GRENADINI": "Saint Vincent and the Grenadines",
+    "SAD": "U.S.A.",
+    "SALOMONOVI OTOCI": "Solomon Islands",
+    "SALVADOR": "El Salvador",
     "SAMOA": "Samoa",
     "SAN MARINO": "San Marino",
-    "SAO TOME I PRINCIPE": "Sao Tome and Principe",
     "SAUDIJSKA ARABIJA": "Saudi Arabia",
-    "SENEGAL": "Senegal",
-    "SRBIJA": "Serbia",
     "SEJŠELI": "Seychelles",
+    "SENEGAL": "Senegal",
     "SIJERA LEONE": "Sierra Leone",
     "SINGAPUR": "Singapore",
-    "SINT MAARTEN": "Sint Maarten",
+    "SIRIJA": "Syria",
     "SLOVAČKA": "Slovakia",
     "SLOVENIJA": "Slovenia",
-    "SALOMONSKI OTOCI": "Solomon Islands",
-    "SOMALIJA": "Somalia",
-    "JUŽNA AFRIKA": "South Africa",
-    "JUŽNA DŽORDŽIJA": "South Georgia and S. Sandwich Islands",
-    "JUŽNI SENDVIČ OTOCI": "South Georgia and S. Sandwich Islands",
-    "JUŽNI SUDAN": "South Sudan",
-    "ŠPANJOLSKA": "Spain",
-    "ŠRI LANKA": "Sri Lanka",
+    "SRBIJA": "Serbia",
+    "SREDNJOAFRIČKA REPUBLIKA": "Central African Republic",
     "SUDAN": "Sudan",
     "SURINAM": "Suriname",
-    "SVALBARD I JAN MAYEN": "Svalbard and Jan Mayen",
+    "SVETA HELENA": "Saint Helena, Ascension and Tristan da Cunha",
+    "SVETA LUCIJA": "Saint Lucia",
+    "SVETI KRISTOFOR I NEVIS": "Saint Kitts and Nevis",
+    "SVETI PETAR I MIKELON": "Saint Pierre & Miquelon",
+    "SVETI TOMA I PRINSIPE": "Sao Tome and Principe",
+    "SVETI VINCENT I GRENADINI": "Saint Vincent and the Grenadines",
+    "ŠPANJOLSKA": "Spain",
+    "ŠRI LANKA": "Sri Lanka",
     "ŠVEDSKA": "Sweden",
     "ŠVICARSKA": "Switzerland",
-    "SIRIJA": "Syria",
-    "TAJVAN": "Taiwan",
     "TADŽIKISTAN": "Tajikistan",
-    "TANZANIJA": "Tanzania",
     "TAJLAND": "Thailand",
-    "TIMOR-LESTE": "Timor-Leste",
+    "TANZANIJA": "Tanzania",
+    "TIMOR - LESTE": "Timor-Leste",
     "TOGO": "Togo",
     "TOKELAU": "Tokelau",
     "TONGA": "Tonga",
+    "TRINIDAD I TO TOBAGO": "Trinidad and Tobago",
     "TRINIDAD I TOBAGO": "Trinidad and Tobago",
+    "TRISTAN DA KUNA": "Saint Helena, Ascension and Tristan da Cunha",
     "TUNIS": "Tunisia",
-    "TURSKA": "Turkey",
     "TURKMENISTAN": "Turkmenistan",
-    "TURKS I CAICOS OTOCI": "Turks and Caicos Islands",
+    "TURKS I KEIKOS OTOCI": "Turks and Caicos Islands",
+    "TURSKA": "Turkey",
     "TUVALU": "Tuvalu",
     "UGANDA": "Uganda",
-    "UKRAJINA": "Ukraine",
     "UJEDINJENI ARAPSKI EMIRATI": "United Arab Emirates",
     "UJEDINJENI ARAPSLI EMIRATI": "United Arab Emirates",
-    "UJEDINJENO KRALJEVSTVO VELIKE BRITANIJE I SJEVERNE IRSKE": "United Kingdom",
+    "UJEDINJENA KRALJEVINA VELIKE BRITANIJE I SJEVERNE IRSKE": "United Kingdom",
+    "UKRAJINA": "Ukraine",
     "URUGVAJ": "Uruguay",
-    "SAD": "U.S.A.",
-    "AMERIČKI MANJI OTOCI": "U.S. Minor Outlying Islands",
     "UZBEKISTAN": "Uzbekistan",
+    "VALIS I FUTUNA": "Wallis & Futuna",
     "VANUATU": "Vanuatu",
-    "VATIKAN": "Vatican",
-    "VENECUELA": "Venezuela",
+    "VENEZUELA": "Venezuela",
     "VIJETNAM": "Vietnam",
-    "DJEVIČANSKI OTOCI (UK)": "Virgin Islands (UK)",
-    "DJEVIČANSKI OTOCI SAD": "Virgin Islands of the USA",
-    "WALLIS I FUTUNA": "Wallis & Futuna",
-    "ZAPADNA SAHARA": "Western Sahara",
-    "JEMEN": "Yemen",
     "ZAMBIJA": "Zambia",
     "ZIMBABVE": "Zimbabwe",
-    "TRISTAN DA KUNA": "Saint Helena, Ascension and Tristan da Cunha",
 }
 
 
+# ----------------------------------------------------------------------
+# HELPERS
+# ----------------------------------------------------------------------
+
 def normalize_text(text):
-    """
-    Normalize whitespace and dash characters.
-    """
     text = text.replace("\u00a0", " ")
     text = text.replace("–", "-")
     text = text.replace("—", "-")
@@ -555,18 +547,25 @@ def normalize_text(text):
 
 def remove_parenthetical_text(text):
     """
-    Remove everything inside parentheses, including the parentheses.
+    Remove parenthetical service information.
+
+    Example:
+        AUSTRALIJA (pismovne pošiljke)
+    becomes:
+        AUSTRALIJA
+
+    IMPORTANT:
+    This does NOT remove duplicate entries.
+    If AUSTRALIJA occurs twice, both occurrences remain.
     """
     return re.sub(r"\([^)]*\)", "", text)
 
 
-def extract_pdf_entries():
-    """
-    Download the PDF and extract the destination entries.
+# ----------------------------------------------------------------------
+# PDF EXTRACTION
+# ----------------------------------------------------------------------
 
-    The PDF has a few formatting/page-break problems, so several
-    known entries are repaired after extraction.
-    """
+def extract_pdf_entries():
     request = urllib.request.Request(
         PDF_URL,
         headers={
@@ -592,7 +591,7 @@ def extract_pdf_entries():
 
     raw_lines = []
 
-    for page in document:
+    for page_number, page in enumerate(document, start=1):
         page_text = page.get_text("text")
 
         for line in page_text.splitlines():
@@ -603,26 +602,26 @@ def extract_pdf_entries():
 
     document.close()
 
-    # Remove the title/header and other obvious non-country lines.
+    # --------------------------------------------------------------
+    # Remove only the title and final date.
+    #
+    # DO NOT remove duplicate country names.
+    # DO NOT use a set().
+    # DO NOT use a "seen" dictionary.
+    # --------------------------------------------------------------
+
     entries = []
 
     for line in raw_lines:
-        upper = line.upper().strip()
-
-        if not upper:
-            continue
+        upper = line.upper()
 
         if "POPIS DRŽAVA U KOJE JE MOGUĆE SLATI POŠILJKE" in upper:
             continue
 
-        if upper in {
-            "DRŽAVE",
-            "DRZAVE",
-            "STRANICA",
-        }:
+        if upper.startswith("POSLJEDNJE IZMJENE"):
             continue
 
-        # Remove parenthetical service notes.
+        # Remove parenthetical service information.
         line = remove_parenthetical_text(line)
         line = normalize_text(line)
 
@@ -631,9 +630,9 @@ def extract_pdf_entries():
 
         entries.append(line)
 
-    # ------------------------------------------------------------
-    # Repair PDF extraction problems.
-    # ------------------------------------------------------------
+    # --------------------------------------------------------------
+    # Repair PDF page-break extraction problems.
+    # --------------------------------------------------------------
 
     repaired = []
 
@@ -643,18 +642,30 @@ def extract_pdf_entries():
         current = entries[i]
         upper = current.upper()
 
-        # Page-break problem:
-        # GVINEJA – BISAUHAITI
-        if "GVINEJA" in upper and "BISAU" in upper:
+        # GVINEJA – BISAU
+        # HAITI
+        #
+        # Sometimes PDF extraction joins these around a page break.
+        if (
+            "GVINEJA" in upper
+            and "BISAU" in upper
+            and "HAITI" in upper
+        ):
             repaired.append("GVINEJA")
             repaired.append("GVINEJA-BISAU")
             repaired.append("HAITI")
             i += 1
             continue
 
-        # Page-break problem:
-        # OVČJI OTOCIPAKISTAN
-        if "OVČJI OTOCI" in upper and "PAKISTAN" in upper:
+        # OVČJI OTOCI
+        # PAKISTAN
+        #
+        # Sometimes extracted as OVČJI OTOCIPAKISTAN.
+        if (
+            "OVČJI OTOCI" in upper
+            and "PAKISTAN" in upper
+            and upper != "OVČJI OTOCI"
+        ):
             repaired.append("OVČJI OTOCI")
             repaired.append("PAKISTAN")
             i += 1
@@ -665,16 +676,16 @@ def extract_pdf_entries():
 
     entries = repaired
 
-    # ------------------------------------------------------------
+    # --------------------------------------------------------------
     # Join known multi-line country names.
-    # ------------------------------------------------------------
+    # --------------------------------------------------------------
 
     joined = []
 
     i = 0
 
     while i < len(entries):
-        current = entries[i].strip()
+        current = entries[i]
         upper = current.upper()
 
         # DEMOKRATSKA NARODNA
@@ -684,7 +695,7 @@ def extract_pdf_entries():
             and i + 1 < len(entries)
             and entries[i + 1].upper() == "REPUBLIKA KOREJA"
         ):
-            joined.append("SJEVERNA KOREJA")
+            joined.append("DEMOKRATSKA NARODNA REPUBLIKA KOREJA")
             i += 2
             continue
 
@@ -695,7 +706,9 @@ def extract_pdf_entries():
             and i + 1 < len(entries)
             and entries[i + 1].upper() == "REPUBLIKA"
         ):
-            joined.append("LAOSKA NARODNA DEMOKRATSKA REPUBLIKA")
+            joined.append(
+                "LAOSKA NARODNA DEMOKRATSKA REPUBLIKA"
+            )
             i += 2
             continue
 
@@ -708,8 +721,8 @@ def extract_pdf_entries():
             == "BRITANIJE I SJEVERNE IRSKE"
         ):
             joined.append(
-                "UJEDINJENO KRALJEVSTVO VELIKE BRITANIJE "
-                "I SJEVERNE IRSKE"
+                "UJEDINJENA KRALJEVINA VELIKE "
+                "BRITANIJE I SJEVERNE IRSKE"
             )
             i += 2
             continue
@@ -719,80 +732,58 @@ def extract_pdf_entries():
 
     entries = joined
 
-    # ------------------------------------------------------------
-    # Clean up known OCR/PDF extraction typos.
-    # ------------------------------------------------------------
+    return entries
 
-    cleaned = []
 
-    for entry in entries:
-        entry = normalize_text(entry)
-
-        if entry.upper() == "UJEDINJENI ARAPSLI EMIRATI":
-            entry = "UJEDINJENI ARAPSLI EMIRATI"
-
-        cleaned.append(entry)
-
-    return cleaned
-
+# ----------------------------------------------------------------------
+# TRANSLATION
+# ----------------------------------------------------------------------
 
 def get_translation(croatian_name):
-    """
-    Return the English/Postcrossing name for a PDF entry.
-    """
     name = normalize_text(croatian_name).upper()
 
     if name in TRANSLATIONS:
         return TRANSLATIONS[name]
 
-    # Try a few common normalization variations.
-    name = name.replace("  ", " ")
-
-    if name in TRANSLATIONS:
-        return TRANSLATIONS[name]
-
-    # Fallback: preserve the entry rather than silently dropping it.
     print(f"WARNING: No translation found for: {croatian_name}")
 
+    # Do not silently discard an unknown PDF entry.
     return croatian_name.title()
 
 
-def get_postcrossing_number(english_name):
-    """
-    Find the Postcrossing number.
+# ----------------------------------------------------------------------
+# POSTCROSSING NUMBER
+# ----------------------------------------------------------------------
 
-    Several Postcrossing names differ slightly from the English
-    translation used in the PDF.
-    """
+def get_postcrossing_number(english_name):
     aliases = {
-        "United States": "U.S.A.",
         "Côte d’Ivoire": "Côte d'Ivoire",
-        "North Macedonia": "North Macedonia",
-        "South Korea": "Korea(South)",
-        "North Korea": "Korea(North)",
         "British Virgin Islands": "Virgin Islands (UK)",
         "U.S. Virgin Islands": "Virgin Islands of the USA",
-        "Saint Helena": "Saint Helena, Ascension and Tristan da Cunha",
+        "North Korea": "Korea(North)",
+        "South Korea": "Korea(South)",
+        "North Macedonia": "North Macedonia",
+        "United States": "U.S.A.",
     }
 
-    lookup_name = aliases.get(english_name, english_name)
+    lookup_name = aliases.get(
+        english_name,
+        english_name,
+    )
 
     return POSTCROSSING_NUMBERS.get(lookup_name)
 
 
+# ----------------------------------------------------------------------
+# OUTPUT
+# ----------------------------------------------------------------------
+
 def create_output(entries):
-    """
-    Create output.txt.
-
-    IMPORTANT:
-    There is deliberately NO deduplication here.
-
-    Every entry extracted from the PDF produces one output line.
-    """
     output_lines = []
 
     for croatian_name in entries:
         english_name = get_translation(croatian_name)
+
         number = get_postcrossing_number(english_name)
 
         if number is not None:
@@ -812,6 +803,10 @@ def create_output(entries):
     return output_lines
 
 
+# ----------------------------------------------------------------------
+# MAIN
+# ----------------------------------------------------------------------
+
 def main():
     try:
         entries = extract_pdf_entries()
@@ -826,15 +821,19 @@ def main():
         output_lines = create_output(entries)
 
         print(f"Output entries written: {len(output_lines)}")
-        print(f"Output file: {OUTPUT_FILE}")
 
-        # This is intentionally informational only.
-        # Repeated destinations are NOT removed.
+        # This should ALWAYS be true.
+        # There is intentionally NO deduplication.
         if len(output_lines) != len(entries):
             raise RuntimeError(
-                "Internal error: output entry count does not match "
+                "ERROR: Output entry count does not match "
                 "PDF entry count."
             )
+
+        print(
+            f"SUCCESS: {len(output_lines)} PDF entries produced "
+            f"{len(output_lines)} output lines."
+        )
 
     except Exception as exc:
         print(f"ERROR: {exc}")
