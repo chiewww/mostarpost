@@ -11,254 +11,17 @@ PDF_URL = (
 )
 
 OUTPUT_FILE = Path("output.txt")
+PDF_FILE = Path("mostar_post.pdf")
 
 
 # ---------------------------------------------------------------------------
-# POSTCROSSING MAPPING
-# ---------------------------------------------------------------------------
-
-POSTCROSSING = {
-    "ALBANIJA": (3, "Albania"),
-    "ALŽIR": (None, "Algeria"),
-    "AMERIČKI DJEVIČANSKI OTOCI": (243, "Virgin Islands of the USA"),
-    "AMERIČKA SAMOA": (5, "American Samoa"),
-    "ANDORA": (6, "Andorra"),
-    "ANGOLA": (7, "Angola"),
-    "ANGVILA": (8, "Anguilla"),
-    "ANTIGVA I BARBUDA": (10, "Antigua & Barbuda"),
-    "ARGENTINA": (11, "Argentina"),
-    "ARMENIJA": (12, "Armenia"),
-    "ARUBA": (13, "Aruba"),
-    "ASENŠN": (185, "Saint Helena, Ascension and Tristan da Cunha"),
-    "AUSTRALIJA": (14, "Australia"),
-    "AUSTRIJA": (15, "Austria"),
-    "AZERBEJDŽAN": (16, "Azerbaijan"),
-    "BAHAMI": (17, "Bahamas"),
-    "BAHREIN": (18, "Bahrain"),
-    "BANGLADEŠ": (19, "Bangladesh"),
-    "BARBADOS": (20, "Barbados"),
-    "BELGIJA": (22, "Belgium"),
-    "BELIZE": (23, "Belize"),
-    "BENIN": (24, "Benin"),
-    "BERMUDA": (25, "Bermuda"),
-    "BJELOKOSNA OBALA": (54, "Côte d'Ivoire"),
-    "BJELORUSIJA": (21, "Belarus"),
-    "BOCVANA": (30, "Botswana"),
-    "BOLIVIJA": (27, "Bolivia"),
-    "BOŽIĆNI OTOK": (46, "Christmas Island"),
-    "BRAZIL": (31, "Brazil"),
-    "BRITANSKI DJEVIČANSKI OTOCI": (242, "Virgin Islands UK"),
-    "BRUNEJ DARUSSALAM": (33, "Brunei"),
-    "BUGARSKA": (34, "Bulgaria"),
-    "BURKINA FASO": (35, "Burkina Faso"),
-    "BURUNDI": (36, "Burundi"),
-    "BUTAN": (26, "Bhutan"),
-    "CIPAR": (58, "Cyprus"),
-    "CRNA GORA": (147, "Montenegro"),
-    "ČAD": (43, "Chad"),
-    "ČEŠKA REPUBLIKA": (59, "Czechia"),
-    "ČILE": (44, "Chile"),
-    "DANSKA": (60, "Denmark"),
-    "DEMOKRATSKA NARODNA REPUBLIKA KOREJA": (116, "Korea North"),
-    "DEMOKRATSKA REPUBLIKA KONGO": (51, "Dem. Rep. Of Congo"),
-    "DOMINIKA": (62, "Dominica"),
-    "DOMINIKANSKA REPUBLIKA": (63, "Dominican Republic"),
-    "DRŽAVA VATIKANSKOGA GRADA": (239, "Vatican"),
-    "DŽIBUTI": (61, "Djibouti"),
-    "EGIPAT": (65, "Egypt"),
-    "EKVADOR": (64, "Ecuador"),
-    "EKVATORSKA GVINEJA": (67, "Equatorial Guinea"),
-    "ERITREJA": (68, "Eritrea"),
-    "ESTONIJA": (69, "Estonia"),
-    "ESVATINI": (70, "Eswatini"),
-    "ETIOPIJA": (71, "Ethiopia"),
-    "FAKLANDI": (72, "Falkland Islands Malvinas"),
-    "FIDŽI": (74, "Fiji"),
-    "FILIPINI": (174, "Philippines"),
-    "FINSKA": (75, "Finland"),
-    "FRANCUSKA": (76, "France"),
-    "FRANCUSKA GVAJANA": (77, "French Guiana"),
-    "FRANCUSKA POLINEZIJA": (78, "French Polynesia"),
-    "GABON": (80, "Gabon"),
-    "GAMBIJA": (81, "Gambia"),
-    "GANA": (84, "Ghana"),
-    "GERNZI": (92, "Guernsey"),
-    "GIBRALTAR": (85, "Gibraltar"),
-    "GRČKA": (86, "Greece"),
-    "GRENADA": (88, "Grenada"),
-    "GRENLAND": (87, "Greenland"),
-    "GRUZIJA": (82, "Georgia"),
-    "GUAM": (90, "Guam"),
-    "GVADALUPA": (89, "Guadeloupe"),
-    "GVAJANA": (95, "Guyana"),
-    "GVATEMALA": (91, "Guatemala"),
-    "GVINEJA": (93, "Guinea"),
-    "GVINEJA – BISAU": (94, "Guinea-Bissau"),
-    "HAITI": (96, "Haiti"),
-    "HONDURAS": (97, "Honduras"),
-    "HONG KONG": (98, "Hong Kong"),
-    "HRVATSKA": (55, "Croatia"),
-    "INDIJA": (101, "India"),
-    "INDONEZIJA": (102, "Indonesia"),
-    "IRAK": (104, "Iraq"),
-    "IRAN": (103, "Iran"),
-    "IRSKA": (105, "Ireland"),
-    "ISLAND": (100, "Iceland"),
-    "ITALIJA": (108, "Italy"),
-    "JAMAJKA": (109, "Jamaica"),
-    "JAPAN": (110, "Japan"),
-    "JORDAN": (112, "Jordan"),
-    "JUŽNA AFRIKA": (205, "South Africa"),
-    "JUŽNA DŽORDŽIJA": (206, "South Georgia and S. Sandwich Islands"),
-    "JUŽNI SENDVIČ OTOCI": (206, "South Georgia and S. Sandwich Islands"),
-    "KABO VERDE": (37, "Cabo Verde"),
-    "KAJMANSKI OTOCI": (41, "Cayman Islands"),
-    "KAMBODŽA": (38, "Cambodia"),
-    "KAMERUN": (39, "Cameroon"),
-    "KANADA": (40, "Canada"),
-    "KATAR": (179, "Qatar"),
-    "KAZAHSTAN": (113, "Kazakhstan"),
-    "KENIJA": (114, "Kenya"),
-    "KINA": (45, "China"),
-    "KIRGISTAN": (120, "Kyrgyzstan"),
-    "KIRIBATI": (115, "Kiribati"),
-    "KOKOSOVI OTOCI": (47, "Cocos Islands"),
-    "KOLUMBIJA": (48, "Colombia"),
-    "KOMORI": (49, "Comoros"),
-    "KONGO": (50, "Congo"),
-    "KOSOVO": (118, "Kosovo"),
-    "KOSTARIKA": (53, "Costa Rica"),
-    "KUBA": (56, "Cuba"),
-    "KUKOVI OTOCI": (52, "Cook Islands"),
-    "KUVAJT": (119, "Kuwait"),
-    "LAOSKA NARODNA DEMOKRATSKA REPUBLIKA": (121, "Laos"),
-    "LATVIJA": (122, "Latvia"),
-    "LESOTO": (124, "Lesotho"),
-    "LIBANON": (123, "Lebanon"),
-    "LIBERIJA": (125, "Liberia"),
-    "LIHTENŠTAJN": (127, "Liechtenstein"),
-    "LITVA": (128, "Lithuania"),
-    "LUKSEMBURG": (129, "Luxembourg"),
-    "MADAGASKAR": (131, "Madagascar"),
-    "MAĐARSKA": (99, "Hungary"),
-    "MAJOT": (141, "Mayotte"),
-    "MAKAO": (130, "Macao"),
-    "MAKEDONIJA": (164, "North Macedonia"),
-    "MALAVI": (132, "Malawi"),
-    "MALDIVI": (134, "Maldives"),
-    "MALEZIJA": (133, "Malaysia"),
-    "MALI": (135, "Mali"),
-    "MALTA": (136, "Malta"),
-    "MARIJANSKI OTOCI": (163, "Northern Mariana Islands"),
-    "MAROKO": (149, "Morocco"),
-    "MARŠALOVI OTOCI": (137, "Marshall Islands"),
-    "MARTINIK": (138, "Martinique"),
-    "MAURICIJUS": (140, "Mauritius"),
-    "MEKSIKO": (142, "Mexico"),
-    "MIKRONEZIJA": (143, "Micronesia"),
-    "MJANMAR": (151, "Myanmar"),
-    "MOLDAVIJA": (144, "Moldova"),
-    "MONAKO": (145, "Monaco"),
-    "MONGOLIJA": (146, "Mongolia"),
-    "MONTSERAT": (148, "Montserrat"),
-    "MOZAMBIK": (150, "Mozambique"),
-    "NAMIBIJA": (152, "Namibia"),
-    "NAURU": (153, "Nauru"),
-    "NEPAL": (154, "Nepal"),
-    "NIGER": (159, "Niger"),
-    "NIGERIJA": (160, "Nigeria"),
-    "NIKARAGVA": (158, "Nicaragua"),
-    "NIUE": (161, "Niue"),
-    "NIZOZEMSKA": (155, "Netherlands"),
-    "NIZOZEMSKI ANTILI": (None, "Netherlands Antilles"),
-    "NJEMAČKA": (83, "Germany"),
-    "NORVEŠKA": (165, "Norway"),
-    "NOVA KALEDONIJA": (156, "New Caledonia"),
-    "NOVI ZELAND": (157, "New Zealand"),
-    "OMAN": (166, "Oman"),
-    "OTOK MAN": (106, "Isle of Man"),
-    "OTOK NORFOLK": (162, "Norfolk Island"),
-    "OVČJI OTOCI": (73, "Faroe Islands"),
-    "PAKISTAN": (167, "Pakistan"),
-    "PALAU": (168, "Palau"),
-    "PANAMA": (170, "Panama"),
-    "PAPUA NOVA GVINEJA": (171, "Papua New Guinea"),
-    "PARAGVAJ": (172, "Paraguay"),
-    "PERU": (173, "Peru"),
-    "PITKERN": (175, "Pitcairn"),
-    "POLJSKA": (176, "Poland"),
-    "PORTORIKO": (178, "Puerto Rico"),
-    "PORTUGAL": (177, "Portugal"),
-    "REPUBLIKA KINA NA TAJVANU": (216, "Taiwan"),
-    "REPUBLIKA KOREJA": (117, "Korea South"),
-    "REUNION": (180, "Réunion"),
-    "RUANDA": (183, "Rwanda"),
-    "RUMUNJSKA": (181, "Romania"),
-    "RUSIJA": (182, "Russia"),
-    "SAD": (235, "U.S.A."),
-    "SALOMONOVI OTOCI": (203, "Solomon Islands"),
-    "SALVADOR": (66, "El Salvador"),
-    "SAMOA": (191, "Samoa"),
-    "SAN MARINO": (192, "San Marino"),
-    "SAUDIJSKA ARABIJA": (194, "Saudi Arabia"),
-    "SEJŠELI": (197, "Seychelles"),
-    "SENEGAL": (195, "Senegal"),
-    "SIJERA LEONE": (198, "Sierra Leone"),
-    "SINGAPUR": (199, "Singapore"),
-    "SIRIJA": (215, "Syria"),
-    "SLOVAČKA": (201, "Slovakia"),
-    "SLOVENIJA": (202, "Slovenia"),
-    "SRBIJA": (196, "Serbia"),
-    "SREDNJOAFRIČKA REPUBLIKA": (42, "Central African Republic"),
-    "SUDAN": (210, "Sudan"),
-    "SURINAM": (211, "Suriname"),
-    "SVETA HELENA": (185, "Saint Helena, Ascension and Tristan da Cunha"),
-    "SVETA LUCIJA": (187, "Saint Lucia"),
-    "SVETI KRISTOFOR I NEVIS": (186, "Saint Kitts and Nevis"),
-    "SVETI PETAR I MIKELON": (189, "Saint Pierre & Miquelon"),
-    "SVETI TOMA I PRINSIPE": (193, "Sao Tome and Principe"),
-    "SVETI VINCENT I GRENADINI": (190, "Saint Vincent and the Grenadines"),
-    "ŠPANJOLSKA": (208, "Spain"),
-    "ŠRI LANKA": (209, "Sri Lanka"),
-    "ŠVEDSKA": (213, "Sweden"),
-    "ŠVICARSKA": (214, "Switzerland"),
-    "TADŽIKISTAN": (217, "Tajikistan"),
-    "TAJLAND": (219, "Thailand"),
-    "TANZANIJA": (218, "Tanzania"),
-    "TIMOR - LESTE": (220, "Timor-Leste"),
-    "TOGO": (221, "Togo"),
-    "TOKELAU": (222, "Tokelau"),
-    "TONGA": (223, "Tonga"),
-    "TRINIDAD I TOBAGO": (224, "Trinidad and Tobago"),
-    "TRISTAN DA KUNA": (185, "Saint Helena, Ascension and Tristan da Cunha"),
-    "TUNIS": (225, "Tunisia"),
-    "TURKMENISTAN": (227, "Turkmenistan"),
-    "TURKS I KEIKOS OTOCI": (228, "Turks and Caicos Islands"),
-    "TURSKA": (226, "Turkey"),
-    "TUVALU": (229, "Tuvalu"),
-    "UGANDA": (230, "Uganda"),
-    "UJEDINJENI ARAPSKI EMIRATI": (232, "United Arab Emirates"),
-    "UJEDINJENA KRALJEVINA VELIKE BRITANIJE I SJEVERNE IRSKE": (
-        233,
-        "United Kingdom",
-    ),
-    "UJEDINJENI ARAPSLI EMIRATI": (232, "United Arab Emirates"),
-    "UKRAJINA": (231, "Ukraine"),
-    "URUGVAJ": (234, "Uruguay"),
-    "UZBEKISTAN": (237, "Uzbekistan"),
-    "VALIS I FUTUNA": (244, "Wallis & Futuna"),
-    "VANUATU": (238, "Vanuatu"),
-    "VENEZUELA": (240, "Venezuela"),
-    "VIJETNAM": (241, "Vietnam"),
-    "ZAMBIJA": (247, "Zambia"),
-    "ZIMBABVE": (248, "Zimbabwe"),
-}
-
-
-# ---------------------------------------------------------------------------
-# EXACT PDF ORDER
+# PDF entries, in the exact order in which they appear in the PDF.
 #
-# Duplicates are intentional.
+# IMPORTANT:
+# - Duplicate entries are intentional and MUST NOT be removed.
+# - Parenthetical restrictions are intentionally included here so that
+#   duplicate occurrences can be detected correctly before parentheses
+#   are removed.
 # ---------------------------------------------------------------------------
 
 PDF_ENTRIES = [
@@ -272,10 +35,10 @@ PDF_ENTRIES = [
     "ANTIGVA I BARBUDA",
     "ARGENTINA",
     "ARMENIJA",
-    "ARUBA",
+    "ARUBA (pismovne pošiljke I paketi)",
     "ASENŠN",
-    "AUSTRALIJA",
-    "AUSTRALIJA",
+    "AUSTRALIJA (pismovne pošiljke)",
+    "AUSTRALIJA (EMS pošiljka i paketi maksimalne mase 10 kg)",
     "AUSTRIJA",
     "AZERBEJDŽAN",
     "BAHAMI",
@@ -288,17 +51,17 @@ PDF_ENTRIES = [
     "BERMUDA",
     "BJELOKOSNA OBALA",
     "BJELORUSIJA",
-    "BOCVANA",
+    "BOCVANA (pismovne pošiljke I paketi)",
     "BOLIVIJA",
-    "BOŽIĆNI OTOK",
-    "BOŽIĆNI OTOK",
+    "BOŽIĆNI OTOK (AUSTRALIJA)",
+    "BOŽIĆNI OTOK (PACIFIC)",
     "BRAZIL",
     "BRITANSKI DJEVIČANSKI OTOCI",
     "BRUNEJ DARUSSALAM",
     "BUGARSKA",
     "BURKINA FASO",
     "BURUNDI",
-    "BUTAN",
+    "BUTAN (pismovne pošiljke I paketi)",
     "CIPAR",
     "CRNA GORA",
     "ČAD",
@@ -318,7 +81,7 @@ PDF_ENTRIES = [
     "ESTONIJA",
     "ESVATINI",
     "ETIOPIJA",
-    "FAKLANDI",
+    "FAKLANDI (MALVINI)",
     "FIDŽI",
     "FILIPINI",
     "FINSKA",
@@ -358,7 +121,7 @@ PDF_ENTRIES = [
     "JUŽNA DŽORDŽIJA",
     "JUŽNI SENDVIČ OTOCI",
     "KABO VERDE",
-    "KAJMANSKI OTOCI",
+    "KAJMANSKI OTOCI (pismovne pošiljke i paketi)",
     "KAMBODŽA",
     "KAMERUN",
     "KANADA",
@@ -377,7 +140,7 @@ PDF_ENTRIES = [
     "KUBA",
     "KUKOVI OTOCI",
     "KUVAJT",
-    "LAOSKA NARODNA DEMOKRATSKA REPUBLIKA",
+    "LAOSKA NARODNA DEMOKRATSKA REPUBLIKA (samo pismovne pošiljke I paketi)",
     "LATVIJA",
     "LESOTO",
     "LIBANON",
@@ -385,7 +148,7 @@ PDF_ENTRIES = [
     "LIHTENŠTAJN",
     "LITVA",
     "LUKSEMBURG",
-    "MADAGASKAR",
+    "MADAGASKAR (samo pismovne pošiljke i paketi)",
     "MAĐARSKA",
     "MAJOT",
     "MAKAO",
@@ -405,7 +168,7 @@ PDF_ENTRIES = [
     "MJANMAR",
     "MOLDAVIJA",
     "MONAKO",
-    "MONGOLIJA",
+    "MONGOLIJA (samo pismovne pošiljke)",
     "MONTSERAT",
     "MOZAMBIK",
     "NAMIBIJA",
@@ -416,12 +179,12 @@ PDF_ENTRIES = [
     "NIKARAGVA",
     "NIUE",
     "NIZOZEMSKA",
-    "NIZOZEMSKI ANTILI",
+    "NIZOZEMSKI ANTILI (samo pismovne pošiljke i paketi)",
     "NJEMAČKA",
     "NORVEŠKA",
     "NOVA KALEDONIJA",
-    "NOVI ZELAND",
-    "NOVI ZELAND",
+    "NOVI ZELAND (samo pismovne pošiljke)",
+    "NOVI ZELAND (EMS pošiljke I paketi maksimalne mase 10kg)",
     "OMAN",
     "OTOK MAN",
     "OTOK NORFOLK",
@@ -491,28 +254,336 @@ PDF_ENTRIES = [
     "URUGVAJ",
     "UZBEKISTAN",
     "VALIS I FUTUNA",
-    "VANUATU",
-    "VENEZUELA",
+    "VANUATU (pismovne pošiljke i paketi)",
     "VIJETNAM",
     "ZAMBIJA",
-    "ZIMBABVE",
+    "ZIMBABVE (samo pismovne pošiljke i paketi)",
 ]
 
 
 # ---------------------------------------------------------------------------
-# DOWNLOAD
+# Postcrossing mapping
+#
+# A normal PDF entry maps to one Postcrossing destination.
+# NIZOZEMSKI ANTILI is the one special case that expands to FOUR
+# Postcrossing destinations.
+# ---------------------------------------------------------------------------
+
+MAPPING = {
+    "ALBANIJA": (3, "Albania"),
+    "ALŽIR": (4, "Algeria"),
+    "AMERIČKI DJEVIČANSKI OTOCI": (243, "Virgin Islands of the USA"),
+    "AMERIČKA SAMOA": (5, "American Samoa"),
+    "ANDORA": (6, "Andorra"),
+    "ANGOLA": (7, "Angola"),
+    "ANGVILA": (8, "Anguilla"),
+    "ANTIGVA I BARBUDA": (10, "Antigua & Barbuda"),
+    "ARGENTINA": (11, "Argentina"),
+    "ARMENIJA": (12, "Armenia"),
+    "ARUBA": (13, "Aruba"),
+    "ASENŠN": (185, "Saint Helena, Ascension and Tristan da Cunha"),
+    "AUSTRALIJA": (14, "Australia"),
+    "AUSTRIJA": (15, "Austria"),
+    "AZERBEJDŽAN": (16, "Azerbaijan"),
+    "BAHAMI": (17, "Bahamas"),
+    "BAHREIN": (18, "Bahrain"),
+    "BANGLADEŠ": (19, "Bangladesh"),
+    "BARBADOS": (20, "Barbados"),
+    "BELGIJA": (22, "Belgium"),
+    "BELIZE": (23, "Belize"),
+    "BENIN": (24, "Benin"),
+    "BERMUDA": (25, "Bermuda"),
+    "BJELOKOSNA OBALA": (54, "Côte d'Ivoire"),
+    "BJELORUSIJA": (21, "Belarus"),
+    "BOCVANA": (30, "Botswana"),
+    "BOLIVIJA": (27, "Bolivia"),
+    "BOŽIĆNI OTOK (AUSTRALIJA)": (46, "Christmas Island"),
+    "BOŽIĆNI OTOK (PACIFIC)": (46, "Christmas Island"),
+    "BRAZIL": (31, "Brazil"),
+    "BRITANSKI DJEVIČANSKI OTOCI": (242, "Virgin Islands (UK)"),
+    "BRUNEJ DARUSSALAM": (33, "Brunei"),
+    "BUGARSKA": (34, "Bulgaria"),
+    "BURKINA FASO": (35, "Burkina Faso"),
+    "BURUNDI": (36, "Burundi"),
+    "BUTAN": (26, "Bhutan"),
+    "CIPAR": (58, "Cyprus"),
+    "CRNA GORA": (147, "Montenegro"),
+    "ČAD": (43, "Chad"),
+    "ČEŠKA REPUBLIKA": (59, "Czechia"),
+    "ČILE": (44, "Chile"),
+    "DANSKA": (60, "Denmark"),
+    "DEMOKRATSKA NARODNA REPUBLIKA KOREJA": (116, "Korea(North)"),
+    "DEMOKRATSKA REPUBLIKA KONGO": (51, "Dem. Rep. Of Congo"),
+    "DOMINIKA": (62, "Dominica"),
+    "DOMINIKANSKA REPUBLIKA": (63, "Dominican Republic"),
+    "DRŽAVA VATIKANSKOGA GRADA": (239, "Vatican"),
+    "DŽIBUTI": (61, "Djibouti"),
+    "EGIPAT": (65, "Egypt"),
+    "EKVADOR": (64, "Ecuador"),
+    "EKVATORSKA GVINEJA": (67, "Equatorial Guinea"),
+    "ERITREJA": (68, "Eritrea"),
+    "ESTONIJA": (69, "Estonia"),
+    "ESVATINI": (70, "Eswatini /Swaziland"),
+    "ETIOPIJA": (71, "Ethiopia"),
+    "FAKLANDI (MALVINI)": (72, "Falkland Islands /Malvinas"),
+    "FIDŽI": (74, "Fiji"),
+    "FILIPINI": (174, "Philippines"),
+    "FINSKA": (75, "Finland"),
+    "FRANCUSKA": (76, "France"),
+    "FRANCUSKA GVAJANA": (77, "French Guiana"),
+    "FRANCUSKA POLINEZIJA": (78, "French Polynesia"),
+    "GABON": (80, "Gabon"),
+    "GAMBIJA": (81, "Gambia"),
+    "GANA": (83, "Ghana"),
+    "GERNZI": (92, "Guernsey"),
+    "GIBRALTAR": (85, "Gibraltar"),
+    "GRČKA": (86, "Greece"),
+    "GRENADA": (88, "Grenada"),
+    "GRENLAND": (87, "Greenland"),
+    "GRUZIJA": (82, "Georgia"),
+    "GUAM": (90, "Guam"),
+    "GVADALUPA": (89, "Guadeloupe"),
+    "GVAJANA": (95, "Guyana"),
+    "GVATEMALA": (91, "Guatemala"),
+    "GVINEJA": (93, "Guinea"),
+    "GVINEJA – BISAU": (94, "Guinea-Bissau"),
+    "HAITI": (96, "Haiti"),
+    "HONDURAS": (97, "Honduras"),
+    "HONG KONG": (98, "Hong Kong"),
+    "HRVATSKA": (55, "Croatia"),
+    "INDIJA": (101, "India"),
+    "INDONEZIJA": (102, "Indonesia"),
+    "IRAK": (104, "Iraq"),
+    "IRAN": (103, "Iran"),
+    "IRSKA": (105, "Ireland"),
+    "ISLAND": (100, "Iceland"),
+    "ITALIJA": (108, "Italy"),
+    "JAMAJKA": (109, "Jamaica"),
+    "JAPAN": (110, "Japan"),
+    "JORDAN": (112, "Jordan"),
+    "JUŽNA AFRIKA": (205, "South Africa"),
+    "JUŽNA DŽORDŽIJA": (206, "South Georgia and S. Sandwich Islands"),
+    "JUŽNI SENDVIČ OTOCI": (206, "South Georgia and S. Sandwich Islands"),
+    "KABO VERDE": (37, "Cabo Verde"),
+    "KAMBODŽA": (38, "Cambodia"),
+    "KAMERUN": (39, "Cameroon"),
+    "KANADA": (40, "Canada"),
+    "KATAR": (179, "Qatar"),
+    "KAZAHSTAN": (113, "Kazakhstan"),
+    "KENIJA": (114, "Kenya"),
+    "KINA": (45, "China"),
+    "KIRGISTAN": (120, "Kyrgyzstan"),
+    "KIRIBATI": (115, "Kiribati"),
+    "KOKOSOVI OTOCI": (47, "Cocos Islands"),
+    "KOLUMBIJA": (48, "Colombia"),
+    "KOMORI": (49, "Comoros"),
+    "KONGO": (50, "Congo"),
+    "KOSOVO": (118, "Kosovo"),
+    "KOSTARIKA": (53, "Costa Rica"),
+    "KUBA": (56, "Cuba"),
+    "KUKOVI OTOCI": (52, "Cook Islands"),
+    "KUVAJT": (119, "Kuwait"),
+    "LAOSKA NARODNA DEMOKRATSKA REPUBLIKA": (121, "Laos"),
+    "LATVIJA": (122, "Latvia"),
+    "LESOTO": (124, "Lesotho"),
+    "LIBANON": (123, "Lebanon"),
+    "LIBERIJA": (125, "Liberia"),
+    "LIHTENŠTAJN": (127, "Liechtenstein"),
+    "LITVA": (128, "Lithuania"),
+    "LUKSEMBURG": (129, "Luxembourg"),
+    "MADAGASKAR": (131, "Madagascar"),
+    "MAĐARSKA": (99, "Hungary"),
+    "MAJOT": (141, "Mayotte"),
+    "MAKAO": (130, "Macao"),
+    "MAKEDONIJA": (165, "North Macedonia"),
+    "MALAVI": (132, "Malawi"),
+    "MALDIVI": (134, "Maldives"),
+    "MALEZIJA": (133, "Malaysia"),
+    "MALI": (135, "Mali"),
+    "MALTA": (136, "Malta"),
+    "MARIJANSKI OTOCI": (163, "Northern Mariana Islands"),
+    "MAROKO": (149, "Morocco"),
+    "MARŠALOVI OTOCI": (137, "Marshall Islands"),
+    "MARTINIK": (138, "Martinique"),
+    "MAURICIJUS": (140, "Mauritius"),
+    "MEKSIKO": (142, "Mexico"),
+    "MIKRONEZIJA": (143, "Micronesia"),
+    "MJANMAR": (151, "Myanmar"),
+    "MOLDAVIJA": (144, "Moldova"),
+    "MONAKO": (145, "Monaco"),
+    "MONGOLIJA": (146, "Mongolia"),
+    "MONTSERAT": (148, "Montserrat"),
+    "MOZAMBIK": (150, "Mozambique"),
+    "NAMIBIJA": (152, "Namibia"),
+    "NAURU": (153, "Nauru / Naoero"),
+    "NEPAL": (154, "Nepal"),
+    "NIGER": (159, "Niger"),
+    "NIGERIJA": (160, "Nigeria"),
+    "NIKARAGVA": (158, "Nicaragua"),
+    "NIUE": (161, "Niue"),
+    "NIZOZEMSKA": (155, "Netherlands"),
+
+    # SPECIAL CASE:
+    # The PDF's "NIZOZEMSKI ANTILI" is represented on Postcrossing
+    # by exactly these four destinations.
+    "NIZOZEMSKI ANTILI": [
+        (13, "Aruba"),
+        (28, "Bonaire, Sint Eustatius and Saba"),
+        (57, "Curaçao"),
+        (200, "Sint Maarten"),
+    ],
+
+    "NJEMAČKA": (83, "Germany"),
+    "NORVEŠKA": (165, "Norway"),
+    "NOVA KALEDONIJA": (156, "New Caledonia"),
+    "NOVI ZELAND": (157, "New Zealand"),
+    "OMAN": (167, "Oman"),
+    "OTOK MAN": (106, "Isle of Man"),
+    "OTOK NORFOLK": (162, "Norfolk Island"),
+    "OVČJI OTOCI": (73, "Faroe Islands"),
+    "PAKISTAN": (167, "Pakistan"),
+    "PALAU": (168, "Palau"),
+    "PANAMA": (170, "Panama"),
+    "PAPUA NOVA GVINEJA": (171, "Papua New Guinea"),
+    "PARAGVAJ": (172, "Paraguay"),
+    "PERU": (173, "Peru"),
+    "PITKERN": (175, "Pitcairn"),
+    "POLJSKA": (176, "Poland"),
+    "PORTORIKO": (178, "Puerto Rico"),
+    "PORTUGAL": (177, "Portugal"),
+    "REPUBLIKA KINA NA TAJVANU": (216, "Taiwan"),
+    "REPUBLIKA KOREJA": (117, "Korea(South)"),
+    "REUNION": (180, "Réunion"),
+    "RUANDA": (183, "Rwanda"),
+    "RUMUNJSKA": (181, "Romania"),
+    "RUSIJA": (182, "Russia"),
+    "SAD": (235, "U.S.A."),
+    "SALOMONOVI OTOCI": (203, "Solomon Islands"),
+    "SALVADOR": (66, "El Salvador"),
+    "SAMOA": (191, "Samoa"),
+    "SAN MARINO": (192, "San Marino"),
+    "SAUDIJSKA ARABIJA": (194, "Saudi Arabia"),
+    "SEJŠELI": (197, "Seychelles"),
+    "SENEGAL": (195, "Senegal"),
+    "SIJERA LEONE": (198, "Sierra Leone"),
+    "SINGAPUR": (199, "Singapore"),
+    "SIRIJA": (215, "Syria"),
+    "SLOVAČKA": (201, "Slovakia"),
+    "SLOVENIJA": (202, "Slovenia"),
+    "SRBIJA": (196, "Serbia"),
+    "SREDNJOAFRIČKA REPUBLIKA": (42, "Central African Republic"),
+    "SUDAN": (210, "Sudan"),
+    "SURINAM": (211, "Suriname"),
+    "SVETA HELENA": (185, "Saint Helena, Ascension and Tristan da Cunha"),
+    "SVETA LUCIJA": (187, "Saint Lucia"),
+    "SVETI KRISTOFOR I NEVIS": (186, "Saint Kitts and Nevis"),
+    "SVETI PETAR I MIKELON": (189, "Saint Pierre & Miquelon"),
+    "SVETI TOMA I PRINSIPE": (193, "Sao Tome and Principe"),
+    "SVETI VINCENT I GRENADINI": (190, "Saint Vincent and the Grenadines"),
+    "ŠPANJOLSKA": (208, "Spain"),
+    "ŠRI LANKA": (209, "Sri Lanka"),
+    "ŠVEDSKA": (213, "Sweden"),
+    "ŠVICARSKA": (214, "Switzerland"),
+    "TADŽIKISTAN": (217, "Tajikistan"),
+    "TAJLAND": (219, "Thailand"),
+    "TANZANIJA": (218, "Tanzania"),
+    "TIMOR - LESTE": (220, "Timor-Leste"),
+    "TOGO": (221, "Togo"),
+    "TOKELAU": (222, "Tokelau"),
+    "TONGA": (223, "Tonga"),
+    "TRINIDAD I TOBAGO": (224, "Trinidad and Tobago"),
+    "TRISTAN DA KUNA": (185, "Saint Helena, Ascension and Tristan da Cunha"),
+    "TUNIS": (225, "Tunisia"),
+    "TURKMENISTAN": (227, "Turkmenistan"),
+    "TURKS I KEIKOS OTOCI": (228, "Turks and Caicos Islands"),
+    "TURSKA": (226, "Turkey"),
+    "TUVALU": (229, "Tuvalu"),
+    "UGANDA": (230, "Uganda"),
+    "UJEDINJENI ARAPSKI EMIRATI": (232, "United Arab Emirates"),
+    "UJEDINJENA KRALJEVINA VELIKE BRITANIJE I SJEVERNE IRSKE": (
+        233,
+        "United Kingdom",
+    ),
+    "UJEDINJENI ARAPSLI EMIRATI": (232, "United Arab Emirates"),
+    "UKRAJINA": (231, "Ukraine"),
+    "URUGVAJ": (234, "Uruguay"),
+    "UZBEKISTAN": (237, "Uzbekistan"),
+    "VALIS I FUTUNA": (244, "Wallis & Futuna"),
+    "VANUATU": (238, "Vanuatu"),
+    "VIJETNAM": (241, "Vietnam"),
+    "ZAMBIJA": (247, "Zambia"),
+    "ZIMBABVE": (248, "Zimbabwe"),
+}
+
+
+# ---------------------------------------------------------------------------
+# Normalization helpers
+# ---------------------------------------------------------------------------
+
+def normalize_text(text):
+    """Normalize whitespace and common PDF extraction variations."""
+    text = text.replace("\u00a0", " ")
+    text = text.replace("\r", " ")
+    text = text.replace("\n", " ")
+    text = text.replace("–", " – ")
+    text = text.replace("—", " — ")
+
+    # Fix known extraction glitches seen in the PDF.
+    text = text.replace(
+        "GVINEJA – BISAUHAITI",
+        "GVINEJA – BISAU HAITI",
+    )
+    text = text.replace(
+        "OVČJI OTOCIPAKISTAN",
+        "OVČJI OTOCI PAKISTAN",
+    )
+
+    text = re.sub(r"\s+", " ", text)
+    return text.strip()
+
+
+def normalize_for_matching(text):
+    """More tolerant normalization used when locating PDF entries."""
+    text = normalize_text(text)
+
+    # Normalize dash variants.
+    text = text.replace(" - ", " – ")
+
+    # Case-insensitive matching is used separately.
+    return text
+
+
+def remove_parentheses(text):
+    """Remove all parenthetical content, including the parentheses."""
+    text = re.sub(r"\s*\([^)]*\)", "", text)
+    text = re.sub(r"\s+", " ", text)
+    return text.strip()
+
+
+def base_entry(entry):
+    """
+    Remove parenthetical restrictions ONLY after an entry has been matched.
+    This is important because the PDF contains duplicate entries such as
+    Australia and New Zealand.
+    """
+    return remove_parentheses(entry)
+
+
+# ---------------------------------------------------------------------------
+# Download PDF
 # ---------------------------------------------------------------------------
 
 def download_pdf():
-    print("Downloading Mostar Post PDF...")
+    print("Downloading PDF...")
 
     request = urllib.request.Request(
         PDF_URL,
         headers={
             "User-Agent": (
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/131.0.0.0 Safari/537.36"
+                "Mozilla/5.0 (X11; Linux x86_64) "
+                "AppleWebKit/537.36 "
+                "(KHTML, like Gecko) "
+                "Chrome/131.0 Safari/537.36"
             )
         },
     )
@@ -520,330 +591,281 @@ def download_pdf():
     with urllib.request.urlopen(request, timeout=60) as response:
         data = response.read()
 
-    print(f"Downloaded {len(data)} bytes.")
-
     if not data.startswith(b"%PDF"):
-        raise RuntimeError("Downloaded file does not appear to be a PDF.")
+        raise RuntimeError("Downloaded file is not a valid PDF.")
 
-    return data
+    PDF_FILE.write_bytes(data)
+
+    print(f"Downloaded {len(data):,} bytes.")
 
 
 # ---------------------------------------------------------------------------
-# PDF TEXT EXTRACTION
+# Extract PDF text
 # ---------------------------------------------------------------------------
 
-def extract_pdf_text(pdf_data):
+def extract_pdf_text():
     print("Extracting PDF text...")
 
-    document = pymupdf.open(
-        stream=pdf_data,
-        filetype="pdf",
-    )
-
-    try:
+    with pymupdf.open(PDF_FILE) as document:
         pages = []
 
         for page in document:
             pages.append(page.get_text("text"))
 
-        return "\n".join(pages)
+    text = "\n".join(pages)
+    text = normalize_for_matching(text)
 
-    finally:
-        document.close()
-
-
-# ---------------------------------------------------------------------------
-# TEXT NORMALIZATION
-# ---------------------------------------------------------------------------
-
-def normalize_text(text):
-    text = text.replace("\u00a0", " ")
-    text = text.replace("\u2013", " – ")
-    text = text.replace("\u2014", " – ")
-    text = text.replace("\u2212", " - ")
-
-    text = re.sub(r"\s+", " ", text)
-
-    return text.strip()
-
-
-def clean_extraction_glitches(text):
-    """
-    Fix known places where PDF text extraction joins adjacent words.
-    """
-
-    replacements = {
-        "GVINEJA – BISAUHAITI": "GVINEJA – BISAU HAITI",
-        "OVČJI OTOCIPAKISTAN": "OVČJI OTOCI PAKISTAN",
-    }
-
-    for old, new in replacements.items():
-        text = text.replace(old, new)
+    if not text:
+        raise RuntimeError("No text could be extracted from the PDF.")
 
     return text
 
 
 # ---------------------------------------------------------------------------
-# PARSING
+# Locate entries sequentially
+#
+# We deliberately DO NOT remove parentheses before parsing.
+# Otherwise the two Australia entries would become indistinguishable and
+# the second one could disappear.
 # ---------------------------------------------------------------------------
 
-def find_entries(text):
-    """
-    Find entries in their exact PDF order.
+def find_pdf_entries(text):
+    print("Finding PDF entries...")
 
-    IMPORTANT:
-    We do NOT remove parentheses before parsing.
+    normalized_text = normalize_for_matching(text)
+    search_text = normalized_text.casefold()
 
-    This means:
-
-        AUSTRALIJA (pismovne pošiljke)
-        AUSTRALIJA (EMS pošiljka...)
-
-    remain two separate occurrences.
-
-    After locating an entry, the parenthetical information is discarded
-    only from that individual occurrence.
-    """
-
-    print("Parsing country entries...")
-
-    text = normalize_text(text)
-    text = clean_extraction_glitches(text)
-
-    # Remove title.
-    text = re.sub(
-        r"POPIS DRŽAVA U KOJE JE MOGUĆE SLATI POŠILJKE\s*:?",
-        " ",
-        text,
-        flags=re.IGNORECASE,
-    )
-
-    # Remove footer.
-    text = re.sub(
-        r"Posljednje izmjene.*$",
-        " ",
-        text,
-        flags=re.IGNORECASE,
-    )
-
-    text = normalize_text(text)
-
-    entries = []
+    found_entries = []
     position = 0
 
-    for expected in PDF_ENTRIES:
+    for index, expected in enumerate(PDF_ENTRIES, start=1):
+        expected_normalized = normalize_for_matching(expected)
+        expected_search = expected_normalized.casefold()
 
-        # Search for the exact country name from the current position.
-        index = text.find(expected, position)
+        found_at = search_text.find(expected_search, position)
 
-        if index == -1:
+        if found_at == -1:
+            # A few PDF extraction differences can occur. Try a
+            # whitespace-tolerant regular expression as a fallback.
+            escaped = re.escape(expected_normalized)
+            escaped = escaped.replace(r"\ ", r"\s+")
 
-            # Try alternate dash form.
-            alternatives = []
-
-            if " – " in expected:
-                alternatives.append(expected.replace(" – ", " - "))
-
-            if " - " in expected:
-                alternatives.append(expected.replace(" - ", " – "))
-
-            found = False
-
-            for alternative in alternatives:
-                index = text.find(alternative, position)
-
-                if index != -1:
-                    expected_used = alternative
-                    found = True
-                    break
-
-            if not found:
-                context_start = max(0, position - 150)
-                context_end = min(len(text), position + 500)
-
-                raise RuntimeError(
-                    "\nCould not find expected PDF entry:\n"
-                    f"    {expected}\n\n"
-                    "Text near current parsing position:\n"
-                    f"    {text[context_start:context_end]}"
-                )
-
-        else:
-            expected_used = expected
-
-        entries.append(expected)
-
-        # IMPORTANT:
-        # Move forward only by the matched country name.
-        #
-        # We intentionally DO NOT delete or consume the parenthetical
-        # text here. This guarantees that a second identical country
-        # immediately after the first one can still be found.
-        position = index + len(expected_used)
-
-    print(f"Successfully found {len(entries)} country entries.")
-
-    return entries
-
-
-# ---------------------------------------------------------------------------
-# OUTPUT CLEANUP
-# ---------------------------------------------------------------------------
-
-def remove_parentheses(text):
-    """
-    Remove all parenthetical sections from one individual entry.
-
-    This happens AFTER the entry occurrence has already been identified,
-    so duplicate PDF entries remain separate.
-    """
-
-    previous = None
-
-    while previous != text:
-        previous = text
-        text = re.sub(r"\([^()]*\)", "", text)
-
-    text = re.sub(r"\s+", " ", text)
-
-    return text.strip()
-
-
-def create_output(entries):
-    lines = []
-
-    for entry in entries:
-
-        if entry not in POSTCROSSING:
-            raise RuntimeError(
-                f"No Postcrossing translation defined for: {entry}"
+            match = re.search(
+                escaped,
+                normalized_text[position:],
+                flags=re.IGNORECASE,
             )
 
-        number, english = POSTCROSSING[entry]
+            if match:
+                found_at = position + match.start()
+                end_at = position + match.end()
+            else:
+                context_start = max(0, position - 150)
+                context_end = min(len(normalized_text), position + 500)
 
-        original = remove_parentheses(entry)
-        english = remove_parentheses(english)
+                context = normalized_text[context_start:context_end]
 
-        if number is not None:
-            line = f"{number}. {original} — {english}"
+                raise RuntimeError(
+                    f"Could not find PDF entry #{index}:\n"
+                    f"{expected}\n\n"
+                    f"Search context:\n{context}"
+                )
         else:
-            line = f"{original} — {english}"
+            end_at = found_at + len(expected_normalized)
 
-        line = re.sub(r"\s+", " ", line).strip()
+        found_entries.append(expected)
+        position = end_at
 
-        lines.append(line)
+    print(f"Found {len(found_entries)} PDF entries.")
 
-    output = "\n".join(lines) + "\n"
-
-    return output
-
-
-# ---------------------------------------------------------------------------
-# VALIDATION
-# ---------------------------------------------------------------------------
-
-def validate_output(entries, output):
-    """
-    Strong validation to make sure duplicates have not disappeared.
-    """
-
-    lines = output.splitlines()
-
-    print("")
-    print("Validation:")
-    print(f"  PDF entries:    {len(entries)}")
-    print(f"  Output lines:   {len(lines)}")
-
-    if len(entries) != len(lines):
-        raise RuntimeError(
-            f"ERROR: PDF contains {len(entries)} entries, "
-            f"but output contains {len(lines)} lines."
-        )
-
-    # Parentheses must never appear in the final file.
-    if "(" in output or ")" in output:
-        raise RuntimeError(
-            "ERROR: Parentheses were found in output.txt."
-        )
-
-    # Explicit duplicate checks.
-    australia_count = entries.count("AUSTRALIJA")
-    new_zealand_count = entries.count("NOVI ZELAND")
-    christmas_island_count = entries.count("BOŽIĆNI OTOK")
-
-    print(f"  AUSTRALIJA:     {australia_count}")
-    print(f"  NOVI ZELAND:    {new_zealand_count}")
-    print(f"  BOŽIĆNI OTOK:   {christmas_island_count}")
-
-    if australia_count != 2:
-        raise RuntimeError(
-            "ERROR: Expected exactly 2 AUSTRALIJA entries, "
-            f"but found {australia_count}."
-        )
-
-    if new_zealand_count != 2:
-        raise RuntimeError(
-            "ERROR: Expected exactly 2 NOVI ZELAND entries, "
-            f"but found {new_zealand_count}."
-        )
-
-    if christmas_island_count != 2:
-        raise RuntimeError(
-            "ERROR: Expected exactly 2 BOŽIĆNI OTOK entries, "
-            f"but found {christmas_island_count}."
-        )
-
-    # Make sure the actual output contains the duplicate lines.
-    australia_lines = [
-        line for line in lines
-        if "AUSTRALIJA — Australia" in line
-    ]
-
-    new_zealand_lines = [
-        line for line in lines
-        if "NOVI ZELAND — New Zealand" in line
-    ]
-
-    if len(australia_lines) != 2:
-        raise RuntimeError(
-            "ERROR: Australia duplicate lines are missing from output."
-        )
-
-    if len(new_zealand_lines) != 2:
-        raise RuntimeError(
-            "ERROR: New Zealand duplicate lines are missing from output."
-        )
-
-    print("  Parentheses:    OK")
-    print("  Duplicates:     OK")
-    print("  Line count:     OK")
-    print("")
-    print("Validation successful.")
+    return found_entries
 
 
 # ---------------------------------------------------------------------------
-# MAIN
+# Create output
 # ---------------------------------------------------------------------------
 
-def main():
+def create_output(entries):
+    print("Creating output.txt...")
 
-    pdf_data = download_pdf()
+    output_lines = []
 
-    raw_text = extract_pdf_text(pdf_data)
+    for entry in entries:
+        source = base_entry(entry)
 
-    entries = find_entries(raw_text)
+        # Special case: NIZOZEMSKI ANTILI expands to FOUR destinations.
+        if source == "NIZOZEMSKI ANTILI":
+            destinations = MAPPING["NIZOZEMSKI ANTILI"]
 
-    output = create_output(entries)
+            for number, english in destinations:
+                # Remove any parentheses from English names too.
+                english = remove_parentheses(english)
 
-    validate_output(entries, output)
+                output_lines.append(
+                    f"{number}. {source} — {english}"
+                )
+
+            continue
+
+        # All normal entries map to one destination.
+        if source not in MAPPING:
+            raise RuntimeError(
+                f"No Postcrossing mapping exists for PDF entry: {source}"
+            )
+
+        number, english = MAPPING[source]
+
+        # Safety: absolutely no parentheses in final output.
+        source_clean = remove_parentheses(source)
+        english_clean = remove_parentheses(english)
+
+        if number is None:
+            line = f"{source_clean} — {english_clean}"
+        else:
+            line = f"{number}. {source_clean} — {english_clean}"
+
+        output_lines.append(line)
 
     OUTPUT_FILE.write_text(
-        output,
+        "\n".join(output_lines) + "\n",
         encoding="utf-8",
     )
 
     print(f"Created {OUTPUT_FILE}")
-    print(f"Output contains {len(output.splitlines())} lines.")
+    print(f"Output lines: {len(output_lines)}")
+
+    return output_lines
+
+
+# ---------------------------------------------------------------------------
+# Validation
+# ---------------------------------------------------------------------------
+
+def validate_output(entries, output_lines):
+    print("Validating output...")
+
+    # Calculate expected number of output lines.
+    expected_output_lines = 0
+
+    for entry in entries:
+        source = base_entry(entry)
+
+        if source == "NIZOZEMSKI ANTILI":
+            expected_output_lines += 4
+        else:
+            expected_output_lines += 1
+
+    if len(output_lines) != expected_output_lines:
+        raise RuntimeError(
+            "Output line count is incorrect: "
+            f"expected {expected_output_lines}, "
+            f"got {len(output_lines)}."
+        )
+
+    # There must be no parentheses anywhere in the output.
+    for line in output_lines:
+        if "(" in line or ")" in line:
+            raise RuntimeError(
+                f"Parentheses remain in output:\n{line}"
+            )
+
+    # Confirm important duplicate entries were preserved.
+    australia_count = sum(
+        1 for line in output_lines
+        if "AUSTRALIJA — Australia" in line
+    )
+
+    if australia_count != 2:
+        raise RuntimeError(
+            f"Expected 2 Australia lines, got {australia_count}."
+        )
+
+    new_zealand_count = sum(
+        1 for line in output_lines
+        if "NOVI ZELAND — New Zealand" in line
+    )
+
+    if new_zealand_count != 2:
+        raise RuntimeError(
+            f"Expected 2 New Zealand lines, got {new_zealand_count}."
+        )
+
+    christmas_island_count = sum(
+        1 for line in output_lines
+        if "BOŽIĆNI OTOK — Christmas Island" in line
+    )
+
+    if christmas_island_count != 2:
+        raise RuntimeError(
+            f"Expected 2 Christmas Island lines, got "
+            f"{christmas_island_count}."
+        )
+
+    # Confirm the special Netherlands Antilles expansion.
+    netherlands_antilles_lines = [
+        line
+        for line in output_lines
+        if "NIZOZEMSKI ANTILI —" in line
+    ]
+
+    expected_antilles = [
+        "13. NIZOZEMSKI ANTILI — Aruba",
+        "28. NIZOZEMSKI ANTILI — Bonaire, Sint Eustatius and Saba",
+        "57. NIZOZEMSKI ANTILI — Curaçao",
+        "200. NIZOZEMSKI ANTILI — Sint Maarten",
+    ]
+
+    if netherlands_antilles_lines != expected_antilles:
+        raise RuntimeError(
+            "NIZOZEMSKI ANTILI mapping is incorrect.\n\n"
+            "Expected:\n"
+            + "\n".join(expected_antilles)
+            + "\n\nGot:\n"
+            + "\n".join(netherlands_antilles_lines)
+        )
+
+    # Explicitly make sure Netherlands was NOT added as part of
+    # NIZOZEMSKI ANTILI.
+    antilles_netherlands = [
+        line
+        for line in netherlands_antilles_lines
+        if "Netherlands" in line
+    ]
+
+    if antilles_netherlands:
+        raise RuntimeError(
+            "ERROR: Netherlands was incorrectly included in "
+            "NIZOZEMSKI ANTILI."
+        )
+
+    print("Validation successful.")
+    print(f"Expected output lines: {expected_output_lines}")
+    print(f"Actual output lines:   {len(output_lines)}")
+    print("Australia entries:     2")
+    print("New Zealand entries:   2")
+    print("Christmas Island:      2")
+    print("Netherlands Antilles:  4")
+    print("Netherlands included:  NO")
+
+
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
+
+def main():
+    download_pdf()
+
+    text = extract_pdf_text()
+
+    entries = find_pdf_entries(text)
+
+    output_lines = create_output(entries)
+
+    validate_output(entries, output_lines)
+
+    print()
+    print("Done.")
+    print(f"Generated: {OUTPUT_FILE}")
 
 
 if __name__ == "__main__":
