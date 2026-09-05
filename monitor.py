@@ -13,8 +13,10 @@ PDF_URL = (
 OUTPUT_FILE = Path("output.txt")
 
 
-# Postcrossing number + English name.
-# Parentheses are deliberately avoided in the English output.
+# ---------------------------------------------------------------------------
+# POSTCROSSING MAPPING
+# ---------------------------------------------------------------------------
+
 POSTCROSSING = {
     "ALBANIJA": (3, "Albania"),
     "ALŽIR": (None, "Algeria"),
@@ -253,8 +255,12 @@ POSTCROSSING = {
 }
 
 
-# Exact order of entries in the PDF.
-# Duplicates are intentional and MUST be preserved.
+# ---------------------------------------------------------------------------
+# EXACT PDF ORDER
+#
+# Duplicates are intentional.
+# ---------------------------------------------------------------------------
+
 PDF_ENTRIES = [
     "ALBANIJA",
     "ALŽIR",
@@ -493,6 +499,10 @@ PDF_ENTRIES = [
 ]
 
 
+# ---------------------------------------------------------------------------
+# DOWNLOAD
+# ---------------------------------------------------------------------------
+
 def download_pdf():
     print("Downloading Mostar Post PDF...")
 
@@ -501,7 +511,8 @@ def download_pdf():
         headers={
             "User-Agent": (
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 Chrome/131 Safari/537.36"
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/131.0.0.0 Safari/537.36"
             )
         },
     )
@@ -517,10 +528,17 @@ def download_pdf():
     return data
 
 
+# ---------------------------------------------------------------------------
+# PDF TEXT EXTRACTION
+# ---------------------------------------------------------------------------
+
 def extract_pdf_text(pdf_data):
     print("Extracting PDF text...")
 
-    document = pymupdf.open(stream=pdf_data, filetype="pdf")
+    document = pymupdf.open(
+        stream=pdf_data,
+        filetype="pdf",
+    )
 
     try:
         pages = []
@@ -528,12 +546,15 @@ def extract_pdf_text(pdf_data):
         for page in document:
             pages.append(page.get_text("text"))
 
-        text = "\n".join(pages)
+        return "\n".join(pages)
+
     finally:
         document.close()
 
-    return text
 
+# ---------------------------------------------------------------------------
+# TEXT NORMALIZATION
+# ---------------------------------------------------------------------------
 
 def normalize_text(text):
     text = text.replace("\u00a0", " ")
@@ -541,30 +562,16 @@ def normalize_text(text):
     text = text.replace("\u2014", " – ")
     text = text.replace("\u2212", " - ")
 
-    # Remove PDF line-break artifacts.
     text = re.sub(r"\s+", " ", text)
 
     return text.strip()
 
 
-def remove_parenthetical_text(text):
+def clean_extraction_glitches(text):
     """
-    Remove every parenthetical section, including nested parentheses.
+    Fix known places where PDF text extraction joins adjacent words.
     """
-    previous = None
 
-    while previous != text:
-        previous = text
-        text = re.sub(r"\([^()]*\)", " ", text)
-
-    text = re.sub(r"\s+", " ", text)
-    return text.strip()
-
-
-def clean_pdf_text(text):
-    text = normalize_text(text)
-
-    # The PDF sometimes joins adjacent words during text extraction.
     replacements = {
         "GVINEJA – BISAUHAITI": "GVINEJA – BISAU HAITI",
         "OVČJI OTOCIPAKISTAN": "OVČJI OTOCI PAKISTAN",
@@ -573,28 +580,37 @@ def clean_pdf_text(text):
     for old, new in replacements.items():
         text = text.replace(old, new)
 
-    # Repair known multi-word entries if PDF extraction inserted spaces.
-    text = text.replace(
-        "DEMOKRATSKA NARODNA REPUBLIKA KOREJA",
-        "DEMOKRATSKA NARODNA REPUBLIKA KOREJA",
-    )
-
     return text
 
 
+# ---------------------------------------------------------------------------
+# PARSING
+# ---------------------------------------------------------------------------
+
 def find_entries(text):
+    """
+    Find entries in their exact PDF order.
+
+    IMPORTANT:
+    We do NOT remove parentheses before parsing.
+
+    This means:
+
+        AUSTRALIJA (pismovne pošiljke)
+        AUSTRALIJA (EMS pošiljka...)
+
+    remain two separate occurrences.
+
+    After locating an entry, the parenthetical information is discarded
+    only from that individual occurrence.
+    """
+
     print("Parsing country entries...")
 
-    # Remove the service descriptions FIRST.
-    # This deliberately keeps duplicate entries such as:
-    #
-    # AUSTRALIJA (pismovne pošiljke)
-    # AUSTRALIJA (EMS...)
-    #
-    # as two AUSTRALIJA entries.
-    text = remove_parenthetical_text(text)
+    text = normalize_text(text)
+    text = clean_extraction_glitches(text)
 
-    # Remove title/footer.
+    # Remove title.
     text = re.sub(
         r"POPIS DRŽAVA U KOJE JE MOGUĆE SLATI POŠILJKE\s*:?",
         " ",
@@ -602,6 +618,7 @@ def find_entries(text):
         flags=re.IGNORECASE,
     )
 
+    # Remove footer.
     text = re.sub(
         r"Posljednje izmjene.*$",
         " ",
@@ -611,38 +628,24 @@ def find_entries(text):
 
     text = normalize_text(text)
 
-    # Known extraction glitches.
-    text = text.replace(
-        "GVINEJA – BISAUHAITI",
-        "GVINEJA – BISAU HAITI",
-    )
-
-    text = text.replace(
-        "OVČJI OTOCIPAKISTAN",
-        "OVČJI OTOCI PAKISTAN",
-    )
-
-    # Some PDF text extraction runs these together.
-    text = text.replace(
-        "UJEDINJENA KRALJEVINA VELIKE BRITANIJE I SJEVERNE IRSKE "
-        "UJEDINJENI ARAPSLI EMIRATI",
-        "UJEDINJENA KRALJEVINA VELIKE BRITANIJE I SJEVERNE IRSKE "
-        "UJEDINJENI ARAPSLI EMIRATI",
-    )
-
     entries = []
-
     position = 0
 
     for expected in PDF_ENTRIES:
+
+        # Search for the exact country name from the current position.
         index = text.find(expected, position)
 
         if index == -1:
-            # Try the PDF's common hyphen/dash variants.
-            alternatives = [
-                expected.replace(" – ", " - "),
-                expected.replace(" - ", " – "),
-            ]
+
+            # Try alternate dash form.
+            alternatives = []
+
+            if " – " in expected:
+                alternatives.append(expected.replace(" – ", " - "))
+
+            if " - " in expected:
+                alternatives.append(expected.replace(" - ", " – "))
 
             found = False
 
@@ -650,45 +653,59 @@ def find_entries(text):
                 index = text.find(alternative, position)
 
                 if index != -1:
+                    expected_used = alternative
                     found = True
                     break
 
             if not found:
-                context_start = max(0, position - 100)
-                context_end = min(len(text), position + 300)
+                context_start = max(0, position - 150)
+                context_end = min(len(text), position + 500)
 
                 raise RuntimeError(
-                    "Could not find expected PDF entry:\n"
+                    "\nCould not find expected PDF entry:\n"
                     f"    {expected}\n\n"
                     "Text near current parsing position:\n"
                     f"    {text[context_start:context_end]}"
                 )
 
+        else:
+            expected_used = expected
+
         entries.append(expected)
-        position = index + len(expected)
+
+        # IMPORTANT:
+        # Move forward only by the matched country name.
+        #
+        # We intentionally DO NOT delete or consume the parenthetical
+        # text here. This guarantees that a second identical country
+        # immediately after the first one can still be found.
+        position = index + len(expected_used)
 
     print(f"Successfully found {len(entries)} country entries.")
 
     return entries
 
 
-def sanitize_output_text(text):
-    """
-    Absolute final protection:
-    output.txt must never contain parentheses.
+# ---------------------------------------------------------------------------
+# OUTPUT CLEANUP
+# ---------------------------------------------------------------------------
 
-    This applies to both the original destination name and
-    the English translation.
+def remove_parentheses(text):
     """
-    text = re.sub(r"\([^()]*\)", "", text)
+    Remove all parenthetical sections from one individual entry.
 
-    # In case nested parentheses somehow survived.
+    This happens AFTER the entry occurrence has already been identified,
+    so duplicate PDF entries remain separate.
+    """
+
     previous = None
+
     while previous != text:
         previous = text
         text = re.sub(r"\([^()]*\)", "", text)
 
     text = re.sub(r"\s+", " ", text)
+
     return text.strip()
 
 
@@ -696,6 +713,7 @@ def create_output(entries):
     lines = []
 
     for entry in entries:
+
         if entry not in POSTCROSSING:
             raise RuntimeError(
                 f"No Postcrossing translation defined for: {entry}"
@@ -703,74 +721,129 @@ def create_output(entries):
 
         number, english = POSTCROSSING[entry]
 
-        original = sanitize_output_text(entry)
-        english = sanitize_output_text(english)
+        original = remove_parentheses(entry)
+        english = remove_parentheses(english)
 
         if number is not None:
             line = f"{number}. {original} — {english}"
         else:
             line = f"{original} — {english}"
 
-        # Final cleanup of accidental double spaces.
         line = re.sub(r"\s+", " ", line).strip()
 
         lines.append(line)
 
     output = "\n".join(lines) + "\n"
 
-    # Final validation.
-    if "(" in output or ")" in output:
-        raise RuntimeError(
-            "ERROR: Parentheses were found in output.txt after sanitization."
-        )
-
-    # One PDF entry must equal one output line.
-    if len(lines) != len(entries):
-        raise RuntimeError(
-            f"ERROR: Expected {len(entries)} output lines, "
-            f"but generated {len(lines)}."
-        )
-
     return output
 
 
+# ---------------------------------------------------------------------------
+# VALIDATION
+# ---------------------------------------------------------------------------
+
+def validate_output(entries, output):
+    """
+    Strong validation to make sure duplicates have not disappeared.
+    """
+
+    lines = output.splitlines()
+
+    print("")
+    print("Validation:")
+    print(f"  PDF entries:    {len(entries)}")
+    print(f"  Output lines:   {len(lines)}")
+
+    if len(entries) != len(lines):
+        raise RuntimeError(
+            f"ERROR: PDF contains {len(entries)} entries, "
+            f"but output contains {len(lines)} lines."
+        )
+
+    # Parentheses must never appear in the final file.
+    if "(" in output or ")" in output:
+        raise RuntimeError(
+            "ERROR: Parentheses were found in output.txt."
+        )
+
+    # Explicit duplicate checks.
+    australia_count = entries.count("AUSTRALIJA")
+    new_zealand_count = entries.count("NOVI ZELAND")
+    christmas_island_count = entries.count("BOŽIĆNI OTOK")
+
+    print(f"  AUSTRALIJA:     {australia_count}")
+    print(f"  NOVI ZELAND:    {new_zealand_count}")
+    print(f"  BOŽIĆNI OTOK:   {christmas_island_count}")
+
+    if australia_count != 2:
+        raise RuntimeError(
+            "ERROR: Expected exactly 2 AUSTRALIJA entries, "
+            f"but found {australia_count}."
+        )
+
+    if new_zealand_count != 2:
+        raise RuntimeError(
+            "ERROR: Expected exactly 2 NOVI ZELAND entries, "
+            f"but found {new_zealand_count}."
+        )
+
+    if christmas_island_count != 2:
+        raise RuntimeError(
+            "ERROR: Expected exactly 2 BOŽIĆNI OTOK entries, "
+            f"but found {christmas_island_count}."
+        )
+
+    # Make sure the actual output contains the duplicate lines.
+    australia_lines = [
+        line for line in lines
+        if "AUSTRALIJA — Australia" in line
+    ]
+
+    new_zealand_lines = [
+        line for line in lines
+        if "NOVI ZELAND — New Zealand" in line
+    ]
+
+    if len(australia_lines) != 2:
+        raise RuntimeError(
+            "ERROR: Australia duplicate lines are missing from output."
+        )
+
+    if len(new_zealand_lines) != 2:
+        raise RuntimeError(
+            "ERROR: New Zealand duplicate lines are missing from output."
+        )
+
+    print("  Parentheses:    OK")
+    print("  Duplicates:     OK")
+    print("  Line count:     OK")
+    print("")
+    print("Validation successful.")
+
+
+# ---------------------------------------------------------------------------
+# MAIN
+# ---------------------------------------------------------------------------
+
 def main():
+
     pdf_data = download_pdf()
 
     raw_text = extract_pdf_text(pdf_data)
-    raw_text = clean_pdf_text(raw_text)
 
     entries = find_entries(raw_text)
 
     output = create_output(entries)
 
-    OUTPUT_FILE.write_text(output, encoding="utf-8")
+    validate_output(entries, output)
+
+    OUTPUT_FILE.write_text(
+        output,
+        encoding="utf-8",
+    )
 
     print(f"Created {OUTPUT_FILE}")
     print(f"Output contains {len(output.splitlines())} lines.")
-
-    # Show a few important duplicate checks.
-    australia_count = sum(
-        1 for entry in entries if entry == "AUSTRALIJA"
-    )
-    new_zealand_count = sum(
-        1 for entry in entries if entry == "NOVI ZELAND"
-    )
-
-    print(f"AUSTRALIJA entries: {australia_count}")
-    print(f"NOVI ZELAND entries: {new_zealand_count}")
-
-    if australia_count != 2:
-        raise RuntimeError(
-            f"ERROR: Expected 2 AUSTRALIJA entries, got {australia_count}."
-        )
-
-    if new_zealand_count != 2:
-        raise RuntimeError(
-            f"ERROR: Expected 2 NOVI ZELAND entries, got {new_zealand_count}."
-        )
-
-    print("Validation successful.")
 
 
 if __name__ == "__main__":
