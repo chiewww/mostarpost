@@ -14,16 +14,6 @@ OUTPUT_FILE = Path("output.txt")
 PDF_FILE = Path("mostar_post.pdf")
 
 
-# ---------------------------------------------------------------------------
-# PDF entries, in the exact order in which they appear in the PDF.
-#
-# IMPORTANT:
-# - Duplicate entries are intentional and MUST NOT be removed.
-# - Parenthetical restrictions are intentionally included here so that
-#   duplicate occurrences can be detected correctly before parentheses
-#   are removed.
-# ---------------------------------------------------------------------------
-
 PDF_ENTRIES = [
     "ALBANIJA",
     "ALŽIR",
@@ -261,14 +251,6 @@ PDF_ENTRIES = [
 ]
 
 
-# ---------------------------------------------------------------------------
-# Postcrossing mapping
-#
-# A normal PDF entry maps to one Postcrossing destination.
-# NIZOZEMSKI ANTILI is the one special case that expands to FOUR
-# Postcrossing destinations.
-# ---------------------------------------------------------------------------
-
 MAPPING = {
     "ALBANIJA": (3, "Albania"),
     "ALŽIR": (4, "Algeria"),
@@ -297,8 +279,7 @@ MAPPING = {
     "BJELORUSIJA": (21, "Belarus"),
     "BOCVANA": (30, "Botswana"),
     "BOLIVIJA": (27, "Bolivia"),
-    "BOŽIĆNI OTOK (AUSTRALIJA)": (46, "Christmas Island"),
-    "BOŽIĆNI OTOK (PACIFIC)": (46, "Christmas Island"),
+    "BOŽIĆNI OTOK": (46, "Christmas Island"),
     "BRAZIL": (31, "Brazil"),
     "BRITANSKI DJEVIČANSKI OTOCI": (242, "Virgin Islands (UK)"),
     "BRUNEJ DARUSSALAM": (33, "Brunei"),
@@ -325,7 +306,7 @@ MAPPING = {
     "ESTONIJA": (69, "Estonia"),
     "ESVATINI": (70, "Eswatini /Swaziland"),
     "ETIOPIJA": (71, "Ethiopia"),
-    "FAKLANDI (MALVINI)": (72, "Falkland Islands /Malvinas"),
+    "FAKLANDI": (72, "Falkland Islands /Malvinas"),
     "FIDŽI": (74, "Fiji"),
     "FILIPINI": (174, "Philippines"),
     "FINSKA": (75, "Finland"),
@@ -395,7 +376,7 @@ MAPPING = {
     "MAĐARSKA": (99, "Hungary"),
     "MAJOT": (141, "Mayotte"),
     "MAKAO": (130, "Macao"),
-    "MAKEDONIJA": (165, "North Macedonia"),
+    "MAKEDONIJA": (164, "North Macedonia"),
     "MALAVI": (132, "Malawi"),
     "MALDIVI": (134, "Maldives"),
     "MALEZIJA": (133, "Malaysia"),
@@ -423,9 +404,8 @@ MAPPING = {
     "NIUE": (161, "Niue"),
     "NIZOZEMSKA": (155, "Netherlands"),
 
-    # SPECIAL CASE:
-    # The PDF's "NIZOZEMSKI ANTILI" is represented on Postcrossing
-    # by exactly these four destinations.
+    # EXACT SPECIAL MAPPING REQUESTED BY THE USER.
+    # Netherlands is deliberately NOT included.
     "NIZOZEMSKI ANTILI": [
         (13, "Aruba"),
         (28, "Bonaire, Sint Eustatius and Saba"),
@@ -437,7 +417,7 @@ MAPPING = {
     "NORVEŠKA": (165, "Norway"),
     "NOVA KALEDONIJA": (156, "New Caledonia"),
     "NOVI ZELAND": (157, "New Zealand"),
-    "OMAN": (167, "Oman"),
+    "OMAN": (166, "Oman"),
     "OTOK MAN": (106, "Isle of Man"),
     "OTOK NORFOLK": (162, "Norfolk Island"),
     "OVČJI OTOCI": (73, "Faroe Islands"),
@@ -516,62 +496,37 @@ MAPPING = {
 }
 
 
-# ---------------------------------------------------------------------------
-# Normalization helpers
-# ---------------------------------------------------------------------------
-
 def normalize_text(text):
-    """Normalize whitespace and common PDF extraction variations."""
     text = text.replace("\u00a0", " ")
     text = text.replace("\r", " ")
     text = text.replace("\n", " ")
     text = text.replace("–", " – ")
     text = text.replace("—", " — ")
 
-    # Fix known extraction glitches seen in the PDF.
     text = text.replace(
         "GVINEJA – BISAUHAITI",
         "GVINEJA – BISAU HAITI",
     )
+
     text = text.replace(
         "OVČJI OTOCIPAKISTAN",
         "OVČJI OTOCI PAKISTAN",
     )
 
     text = re.sub(r"\s+", " ", text)
+
     return text.strip()
 
 
-def normalize_for_matching(text):
-    """More tolerant normalization used when locating PDF entries."""
-    text = normalize_text(text)
-
-    # Normalize dash variants.
-    text = text.replace(" - ", " – ")
-
-    # Case-insensitive matching is used separately.
-    return text
-
-
 def remove_parentheses(text):
-    """Remove all parenthetical content, including the parentheses."""
     text = re.sub(r"\s*\([^)]*\)", "", text)
     text = re.sub(r"\s+", " ", text)
     return text.strip()
 
 
 def base_entry(entry):
-    """
-    Remove parenthetical restrictions ONLY after an entry has been matched.
-    This is important because the PDF contains duplicate entries such as
-    Australia and New Zealand.
-    """
     return remove_parentheses(entry)
 
-
-# ---------------------------------------------------------------------------
-# Download PDF
-# ---------------------------------------------------------------------------
 
 def download_pdf():
     print("Downloading PDF...")
@@ -599,10 +554,6 @@ def download_pdf():
     print(f"Downloaded {len(data):,} bytes.")
 
 
-# ---------------------------------------------------------------------------
-# Extract PDF text
-# ---------------------------------------------------------------------------
-
 def extract_pdf_text():
     print("Extracting PDF text...")
 
@@ -613,7 +564,7 @@ def extract_pdf_text():
             pages.append(page.get_text("text"))
 
     text = "\n".join(pages)
-    text = normalize_for_matching(text)
+    text = normalize_text(text)
 
     if not text:
         raise RuntimeError("No text could be extracted from the PDF.")
@@ -621,69 +572,90 @@ def extract_pdf_text():
     return text
 
 
-# ---------------------------------------------------------------------------
-# Locate entries sequentially
-#
-# We deliberately DO NOT remove parentheses before parsing.
-# Otherwise the two Australia entries would become indistinguishable and
-# the second one could disappear.
-# ---------------------------------------------------------------------------
-
 def find_pdf_entries(text):
     print("Finding PDF entries...")
 
-    normalized_text = normalize_for_matching(text)
+    normalized_text = normalize_text(text)
     search_text = normalized_text.casefold()
 
     found_entries = []
     position = 0
 
     for index, expected in enumerate(PDF_ENTRIES, start=1):
-        expected_normalized = normalize_for_matching(expected)
+        expected_normalized = normalize_text(expected)
         expected_search = expected_normalized.casefold()
 
-        found_at = search_text.find(expected_search, position)
+        # First attempt: exact entry, including parentheses.
+        found_at = search_text.find(
+            expected_search,
+            position,
+        )
+
+        if found_at != -1:
+            end_at = found_at + len(expected_normalized)
+            found_entries.append(expected)
+            position = end_at
+            continue
+
+        # ------------------------------------------------------------------
+        # FALLBACK:
+        #
+        # Some PDF extraction versions lose the parenthetical restriction.
+        # Example:
+        #
+        # Expected:
+        # VANUATU (pismovne pošiljke i paketi)
+        #
+        # Extracted:
+        # VANUATU VENEZUELA (pismovne...)
+        #
+        # In this situation use the base name.
+        #
+        # We do this ONLY when the full entry cannot be found, so duplicate
+        # entries such as Australia and New Zealand are still preserved.
+        # ------------------------------------------------------------------
+
+        base = base_entry(expected)
+        base_normalized = normalize_text(base)
+        base_search = base_normalized.casefold()
+
+        found_at = search_text.find(
+            base_search,
+            position,
+        )
 
         if found_at == -1:
-            # A few PDF extraction differences can occur. Try a
-            # whitespace-tolerant regular expression as a fallback.
-            escaped = re.escape(expected_normalized)
-            escaped = escaped.replace(r"\ ", r"\s+")
-
-            match = re.search(
-                escaped,
-                normalized_text[position:],
-                flags=re.IGNORECASE,
+            context_start = max(0, position - 150)
+            context_end = min(
+                len(normalized_text),
+                position + 500,
             )
 
-            if match:
-                found_at = position + match.start()
-                end_at = position + match.end()
-            else:
-                context_start = max(0, position - 150)
-                context_end = min(len(normalized_text), position + 500)
+            context = normalized_text[
+                context_start:context_end
+            ]
 
-                context = normalized_text[context_start:context_end]
+            raise RuntimeError(
+                f"Could not find PDF entry #{index}:\n\n"
+                f"{expected}\n\n"
+                f"Search context:\n\n"
+                f"{context}"
+            )
 
-                raise RuntimeError(
-                    f"Could not find PDF entry #{index}:\n"
-                    f"{expected}\n\n"
-                    f"Search context:\n{context}"
-                )
-        else:
-            end_at = found_at + len(expected_normalized)
+        end_at = found_at + len(base_normalized)
 
         found_entries.append(expected)
         position = end_at
+
+        print(
+            f"  Note: entry #{index} matched by base name: "
+            f"{base}"
+        )
 
     print(f"Found {len(found_entries)} PDF entries.")
 
     return found_entries
 
-
-# ---------------------------------------------------------------------------
-# Create output
-# ---------------------------------------------------------------------------
 
 def create_output(entries):
     print("Creating output.txt...")
@@ -693,12 +665,23 @@ def create_output(entries):
     for entry in entries:
         source = base_entry(entry)
 
-        # Special case: NIZOZEMSKI ANTILI expands to FOUR destinations.
+        # ---------------------------------------------------------------
+        # SPECIAL CASE:
+        #
+        # NIZOZEMSKI ANTILI = EXACTLY FOUR Postcrossing destinations.
+        #
+        # 13 Aruba
+        # 28 Bonaire, Sint Eustatius and Saba
+        # 57 Curaçao
+        # 200 Sint Maarten
+        #
+        # Netherlands (#155) is deliberately NOT included.
+        # ---------------------------------------------------------------
+
         if source == "NIZOZEMSKI ANTILI":
             destinations = MAPPING["NIZOZEMSKI ANTILI"]
 
             for number, english in destinations:
-                # Remove any parentheses from English names too.
                 english = remove_parentheses(english)
 
                 output_lines.append(
@@ -707,22 +690,25 @@ def create_output(entries):
 
             continue
 
-        # All normal entries map to one destination.
         if source not in MAPPING:
             raise RuntimeError(
-                f"No Postcrossing mapping exists for PDF entry: {source}"
+                f"No Postcrossing mapping exists for PDF entry: "
+                f"{source}"
             )
 
         number, english = MAPPING[source]
 
-        # Safety: absolutely no parentheses in final output.
         source_clean = remove_parentheses(source)
         english_clean = remove_parentheses(english)
 
         if number is None:
             line = f"{source_clean} — {english_clean}"
         else:
-            line = f"{number}. {source_clean} — {english_clean}"
+            line = (
+                f"{number}. "
+                f"{source_clean} — "
+                f"{english_clean}"
+            )
 
         output_lines.append(line)
 
@@ -737,14 +723,9 @@ def create_output(entries):
     return output_lines
 
 
-# ---------------------------------------------------------------------------
-# Validation
-# ---------------------------------------------------------------------------
-
 def validate_output(entries, output_lines):
     print("Validating output...")
 
-    # Calculate expected number of output lines.
     expected_output_lines = 0
 
     for entry in entries:
@@ -762,47 +743,57 @@ def validate_output(entries, output_lines):
             f"got {len(output_lines)}."
         )
 
-    # There must be no parentheses anywhere in the output.
+    # No parentheses anywhere in final output.
     for line in output_lines:
         if "(" in line or ")" in line:
             raise RuntimeError(
                 f"Parentheses remain in output:\n{line}"
             )
 
-    # Confirm important duplicate entries were preserved.
+    # Australia must appear twice.
     australia_count = sum(
-        1 for line in output_lines
+        1
+        for line in output_lines
         if "AUSTRALIJA — Australia" in line
     )
 
     if australia_count != 2:
         raise RuntimeError(
-            f"Expected 2 Australia lines, got {australia_count}."
+            f"Expected 2 Australia lines, "
+            f"got {australia_count}."
         )
 
+    # New Zealand must appear twice.
     new_zealand_count = sum(
-        1 for line in output_lines
+        1
+        for line in output_lines
         if "NOVI ZELAND — New Zealand" in line
     )
 
     if new_zealand_count != 2:
         raise RuntimeError(
-            f"Expected 2 New Zealand lines, got {new_zealand_count}."
+            f"Expected 2 New Zealand lines, "
+            f"got {new_zealand_count}."
         )
 
-    christmas_island_count = sum(
-        1 for line in output_lines
+    # Christmas Island must appear twice.
+    christmas_count = sum(
+        1
+        for line in output_lines
         if "BOŽIĆNI OTOK — Christmas Island" in line
     )
 
-    if christmas_island_count != 2:
+    if christmas_count != 2:
         raise RuntimeError(
-            f"Expected 2 Christmas Island lines, got "
-            f"{christmas_island_count}."
+            f"Expected 2 Christmas Island lines, "
+            f"got {christmas_count}."
         )
 
-    # Confirm the special Netherlands Antilles expansion.
-    netherlands_antilles_lines = [
+    # ---------------------------------------------------------------
+    # Verify exact NIZOZEMSKI ANTILI expansion.
+    # ---------------------------------------------------------------
+
+    antilles_lines = [
         line
         for line in output_lines
         if "NIZOZEMSKI ANTILI —" in line
@@ -815,27 +806,35 @@ def validate_output(entries, output_lines):
         "200. NIZOZEMSKI ANTILI — Sint Maarten",
     ]
 
-    if netherlands_antilles_lines != expected_antilles:
+    if antilles_lines != expected_antilles:
         raise RuntimeError(
             "NIZOZEMSKI ANTILI mapping is incorrect.\n\n"
             "Expected:\n"
             + "\n".join(expected_antilles)
-            + "\n\nGot:\n"
-            + "\n".join(netherlands_antilles_lines)
+            + "\n\n"
+            "Got:\n"
+            + "\n".join(antilles_lines)
         )
 
-    # Explicitly make sure Netherlands was NOT added as part of
-    # NIZOZEMSKI ANTILI.
-    antilles_netherlands = [
+    # Netherlands must NOT appear in the Antilles expansion.
+    for line in antilles_lines:
+        if "Netherlands" in line:
+            raise RuntimeError(
+                "ERROR: Netherlands was incorrectly included "
+                "in NIZOZEMSKI ANTILI."
+            )
+
+    # Verify that the separate NIZOZEMSKA entry still exists.
+    netherlands_lines = [
         line
-        for line in netherlands_antilles_lines
-        if "Netherlands" in line
+        for line in output_lines
+        if "NIZOZEMSKA — Netherlands" in line
     ]
 
-    if antilles_netherlands:
+    if len(netherlands_lines) != 1:
         raise RuntimeError(
-            "ERROR: Netherlands was incorrectly included in "
-            "NIZOZEMSKI ANTILI."
+            "Expected exactly one separate "
+            "NIZOZEMSKA — Netherlands line."
         )
 
     print("Validation successful.")
@@ -845,12 +844,8 @@ def validate_output(entries, output_lines):
     print("New Zealand entries:   2")
     print("Christmas Island:      2")
     print("Netherlands Antilles:  4")
-    print("Netherlands included:  NO")
+    print("Netherlands in Antilles: NO")
 
-
-# ---------------------------------------------------------------------------
-# Main
-# ---------------------------------------------------------------------------
 
 def main():
     download_pdf()
