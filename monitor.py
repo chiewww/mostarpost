@@ -346,6 +346,7 @@ MAPPING = {
     "JUŽNA DŽORDŽIJA": (206, "South Georgia and S. Sandwich Islands"),
     "JUŽNI SENDVIČ OTOCI": (206, "South Georgia and S. Sandwich Islands"),
     "KABO VERDE": (37, "Cabo Verde"),
+    "KAJMANSKI OTOCI": (41, "Cayman Islands"),
     "KAMBODŽA": (38, "Cambodia"),
     "KAMERUN": (39, "Cameroon"),
     "KANADA": (40, "Canada"),
@@ -404,8 +405,9 @@ MAPPING = {
     "NIUE": (161, "Niue"),
     "NIZOZEMSKA": (155, "Netherlands"),
 
-    # EXACT SPECIAL MAPPING REQUESTED BY THE USER.
-    # Netherlands is deliberately NOT included.
+    # EXACT SPECIAL MAPPING:
+    # NIZOZEMSKI ANTILI -> four Postcrossing destinations.
+    # Netherlands (#155) is NOT included here.
     "NIZOZEMSKI ANTILI": [
         (13, "Aruba"),
         (28, "Bonaire, Sint Eustatius and Saba"),
@@ -500,9 +502,11 @@ def normalize_text(text):
     text = text.replace("\u00a0", " ")
     text = text.replace("\r", " ")
     text = text.replace("\n", " ")
+
     text = text.replace("–", " – ")
     text = text.replace("—", " — ")
 
+    # Known PDF extraction glitches.
     text = text.replace(
         "GVINEJA – BISAUHAITI",
         "GVINEJA – BISAU HAITI",
@@ -519,6 +523,9 @@ def normalize_text(text):
 
 
 def remove_parentheses(text):
+    """
+    Remove all parenthetical text from a string.
+    """
     text = re.sub(r"\s*\([^)]*\)", "", text)
     text = re.sub(r"\s+", " ", text)
     return text.strip()
@@ -547,7 +554,9 @@ def download_pdf():
         data = response.read()
 
     if not data.startswith(b"%PDF"):
-        raise RuntimeError("Downloaded file is not a valid PDF.")
+        raise RuntimeError(
+            "Downloaded file is not a valid PDF."
+        )
 
     PDF_FILE.write_bytes(data)
 
@@ -567,7 +576,9 @@ def extract_pdf_text():
     text = normalize_text(text)
 
     if not text:
-        raise RuntimeError("No text could be extracted from the PDF.")
+        raise RuntimeError(
+            "No text could be extracted from the PDF."
+        )
 
     return text
 
@@ -581,40 +592,32 @@ def find_pdf_entries(text):
     found_entries = []
     position = 0
 
-    for index, expected in enumerate(PDF_ENTRIES, start=1):
+    for index, expected in enumerate(
+        PDF_ENTRIES,
+        start=1,
+    ):
         expected_normalized = normalize_text(expected)
         expected_search = expected_normalized.casefold()
 
-        # First attempt: exact entry, including parentheses.
+        # First try the complete entry, including parentheses.
         found_at = search_text.find(
             expected_search,
             position,
         )
 
         if found_at != -1:
-            end_at = found_at + len(expected_normalized)
+            end_at = (
+                found_at
+                + len(expected_normalized)
+            )
+
             found_entries.append(expected)
             position = end_at
+
             continue
 
-        # ------------------------------------------------------------------
-        # FALLBACK:
-        #
-        # Some PDF extraction versions lose the parenthetical restriction.
-        # Example:
-        #
-        # Expected:
-        # VANUATU (pismovne pošiljke i paketi)
-        #
-        # Extracted:
-        # VANUATU VENEZUELA (pismovne...)
-        #
-        # In this situation use the base name.
-        #
-        # We do this ONLY when the full entry cannot be found, so duplicate
-        # entries such as Australia and New Zealand are still preserved.
-        # ------------------------------------------------------------------
-
+        # If the PDF extractor omitted the parenthetical restriction,
+        # try the base country/place name.
         base = base_entry(expected)
         base_normalized = normalize_text(base)
         base_search = base_normalized.casefold()
@@ -625,7 +628,11 @@ def find_pdf_entries(text):
         )
 
         if found_at == -1:
-            context_start = max(0, position - 150)
+            context_start = max(
+                0,
+                position - 150,
+            )
+
             context_end = min(
                 len(normalized_text),
                 position + 500,
@@ -642,17 +649,22 @@ def find_pdf_entries(text):
                 f"{context}"
             )
 
-        end_at = found_at + len(base_normalized)
+        end_at = (
+            found_at
+            + len(base_normalized)
+        )
 
         found_entries.append(expected)
         position = end_at
 
         print(
-            f"  Note: entry #{index} matched by base name: "
-            f"{base}"
+            f"  Note: entry #{index} matched "
+            f"by base name: {base}"
         )
 
-    print(f"Found {len(found_entries)} PDF entries.")
+    print(
+        f"Found {len(found_entries)} PDF entries."
+    )
 
     return found_entries
 
@@ -668,41 +680,82 @@ def create_output(entries):
         # ---------------------------------------------------------------
         # SPECIAL CASE:
         #
-        # NIZOZEMSKI ANTILI = EXACTLY FOUR Postcrossing destinations.
+        # NIZOZEMSKI ANTILI becomes exactly four Postcrossing destinations.
         #
-        # 13 Aruba
-        # 28 Bonaire, Sint Eustatius and Saba
-        # 57 Curaçao
-        # 200 Sint Maarten
+        # 13. Aruba
+        # 28. Bonaire, Sint Eustatius and Saba
+        # 57. Curaçao
+        # 200. Sint Maarten
         #
-        # Netherlands (#155) is deliberately NOT included.
+        # Netherlands (#155) is NOT included.
         # ---------------------------------------------------------------
 
         if source == "NIZOZEMSKI ANTILI":
-            destinations = MAPPING["NIZOZEMSKI ANTILI"]
+            destinations = MAPPING[
+                "NIZOZEMSKI ANTILI"
+            ]
 
             for number, english in destinations:
-                english = remove_parentheses(english)
+                english = remove_parentheses(
+                    english
+                )
 
                 output_lines.append(
-                    f"{number}. {source} — {english}"
+                    f"{number}. "
+                    f"{source} — "
+                    f"{english}"
                 )
 
             continue
 
+        # ---------------------------------------------------------------
+        # NORMAL ENTRY
+        #
+        # The source is already stripped of parentheses, so entries such
+        # as:
+        #
+        # KAJMANSKI OTOCI (pismovne pošiljke i paketi)
+        #
+        # correctly become:
+        #
+        # KAJMANSKI OTOCI
+        #
+        # before the mapping lookup.
+        # ---------------------------------------------------------------
+
         if source not in MAPPING:
             raise RuntimeError(
-                f"No Postcrossing mapping exists for PDF entry: "
+                "No Postcrossing mapping exists for "
+                f"PDF entry: {source}"
+            )
+
+        mapping = MAPPING[source]
+
+        # Normal entries have exactly one destination.
+        if (
+            not isinstance(mapping, tuple)
+            or len(mapping) != 2
+        ):
+            raise RuntimeError(
+                f"Invalid mapping for PDF entry: "
                 f"{source}"
             )
 
-        number, english = MAPPING[source]
+        number, english = mapping
 
-        source_clean = remove_parentheses(source)
-        english_clean = remove_parentheses(english)
+        source_clean = remove_parentheses(
+            source
+        )
+
+        english_clean = remove_parentheses(
+            english
+        )
 
         if number is None:
-            line = f"{source_clean} — {english_clean}"
+            line = (
+                f"{source_clean} — "
+                f"{english_clean}"
+            )
         else:
             line = (
                 f"{number}. "
@@ -717,13 +770,21 @@ def create_output(entries):
         encoding="utf-8",
     )
 
-    print(f"Created {OUTPUT_FILE}")
-    print(f"Output lines: {len(output_lines)}")
+    print(
+        f"Created {OUTPUT_FILE}"
+    )
+
+    print(
+        f"Output lines: {len(output_lines)}"
+    )
 
     return output_lines
 
 
-def validate_output(entries, output_lines):
+def validate_output(
+    entries,
+    output_lines,
+):
     print("Validating output...")
 
     expected_output_lines = 0
@@ -743,14 +804,15 @@ def validate_output(entries, output_lines):
             f"got {len(output_lines)}."
         )
 
-    # No parentheses anywhere in final output.
+    # Absolutely no parentheses may remain.
     for line in output_lines:
         if "(" in line or ")" in line:
             raise RuntimeError(
-                f"Parentheses remain in output:\n{line}"
+                f"Parentheses remain in output:\n"
+                f"{line}"
             )
 
-    # Australia must appear twice.
+    # Australia must occur twice.
     australia_count = sum(
         1
         for line in output_lines
@@ -759,11 +821,11 @@ def validate_output(entries, output_lines):
 
     if australia_count != 2:
         raise RuntimeError(
-            f"Expected 2 Australia lines, "
+            "Expected 2 Australia lines, "
             f"got {australia_count}."
         )
 
-    # New Zealand must appear twice.
+    # New Zealand must occur twice.
     new_zealand_count = sum(
         1
         for line in output_lines
@@ -772,25 +834,41 @@ def validate_output(entries, output_lines):
 
     if new_zealand_count != 2:
         raise RuntimeError(
-            f"Expected 2 New Zealand lines, "
+            "Expected 2 New Zealand lines, "
             f"got {new_zealand_count}."
         )
 
-    # Christmas Island must appear twice.
+    # Christmas Island must occur twice.
     christmas_count = sum(
         1
         for line in output_lines
-        if "BOŽIĆNI OTOK — Christmas Island" in line
+        if "BOŽIĆNI OTOK — Christmas Island"
+        in line
     )
 
     if christmas_count != 2:
         raise RuntimeError(
-            f"Expected 2 Christmas Island lines, "
+            "Expected 2 Christmas Island lines, "
             f"got {christmas_count}."
         )
 
+    # Cayman Islands must be present.
+    cayman_lines = [
+        line
+        for line in output_lines
+        if "KAJMANSKI OTOCI — Cayman Islands"
+        in line
+    ]
+
+    if len(cayman_lines) != 1:
+        raise RuntimeError(
+            "Expected exactly one Cayman Islands "
+            "line, got "
+            f"{len(cayman_lines)}."
+        )
+
     # ---------------------------------------------------------------
-    # Verify exact NIZOZEMSKI ANTILI expansion.
+    # Verify exact NIZOZEMSKI ANTILI mapping.
     # ---------------------------------------------------------------
 
     antilles_lines = [
@@ -801,14 +879,18 @@ def validate_output(entries, output_lines):
 
     expected_antilles = [
         "13. NIZOZEMSKI ANTILI — Aruba",
-        "28. NIZOZEMSKI ANTILI — Bonaire, Sint Eustatius and Saba",
+        (
+            "28. NIZOZEMSKI ANTILI — "
+            "Bonaire, Sint Eustatius and Saba"
+        ),
         "57. NIZOZEMSKI ANTILI — Curaçao",
         "200. NIZOZEMSKI ANTILI — Sint Maarten",
     ]
 
     if antilles_lines != expected_antilles:
         raise RuntimeError(
-            "NIZOZEMSKI ANTILI mapping is incorrect.\n\n"
+            "NIZOZEMSKI ANTILI mapping is "
+            "incorrect.\n\n"
             "Expected:\n"
             + "\n".join(expected_antilles)
             + "\n\n"
@@ -816,15 +898,16 @@ def validate_output(entries, output_lines):
             + "\n".join(antilles_lines)
         )
 
-    # Netherlands must NOT appear in the Antilles expansion.
+    # Netherlands must NOT be included in the
+    # NIZOZEMSKI ANTILI expansion.
     for line in antilles_lines:
         if "Netherlands" in line:
             raise RuntimeError(
-                "ERROR: Netherlands was incorrectly included "
-                "in NIZOZEMSKI ANTILI."
+                "ERROR: Netherlands was incorrectly "
+                "included in NIZOZEMSKI ANTILI."
             )
 
-    # Verify that the separate NIZOZEMSKA entry still exists.
+    # But the separate NIZOZEMSKA entry MUST remain.
     netherlands_lines = [
         line
         for line in output_lines
@@ -838,11 +921,18 @@ def validate_output(entries, output_lines):
         )
 
     print("Validation successful.")
-    print(f"Expected output lines: {expected_output_lines}")
-    print(f"Actual output lines:   {len(output_lines)}")
+    print(
+        f"Expected output lines: "
+        f"{expected_output_lines}"
+    )
+    print(
+        f"Actual output lines:   "
+        f"{len(output_lines)}"
+    )
     print("Australia entries:     2")
     print("New Zealand entries:   2")
     print("Christmas Island:      2")
+    print("Cayman Islands:        1")
     print("Netherlands Antilles:  4")
     print("Netherlands in Antilles: NO")
 
@@ -856,11 +946,16 @@ def main():
 
     output_lines = create_output(entries)
 
-    validate_output(entries, output_lines)
+    validate_output(
+        entries,
+        output_lines,
+    )
 
     print()
     print("Done.")
-    print(f"Generated: {OUTPUT_FILE}")
+    print(
+        f"Generated: {OUTPUT_FILE}"
+    )
 
 
 if __name__ == "__main__":
