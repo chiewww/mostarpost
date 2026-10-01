@@ -1,4 +1,4 @@
-name: update Mostar Post
+name: monitor Mostar Post
 
 on:
   schedule:
